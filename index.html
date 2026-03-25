@@ -7,8 +7,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            margin: 0; padding: 0; height: 100vh; width: 100vw;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            margin: 0; padding: 0; 
+            min-height: 100vh; width: 100vw;
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) fixed; /* Fundo travado cobrindo tudo */
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
             zoom: 0.60;
         }
@@ -21,7 +22,7 @@
         /* --- ESTRUTURA FIXA --- */
         #topoEsquerdo { position: absolute; top: 15px; left: 30px; display: flex; align-items: center; gap: 15px; z-index: 100; }
         #logoEscola { height: 75px; }
-        #nomeEscola { font-size: 24px; font-weight: bold; } /* Reduzido de 26px */
+        #nomeEscola { font-size: 24px; font-weight: bold; }
         #dataHora { position: absolute; top: 15px; right: 30px; font-size: 13px; font-weight: bold; text-align: right; z-index: 100; }
         #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
         #clima { font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
@@ -32,7 +33,7 @@
             padding: 110px 30px 20px 30px; box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
-        h1 { font-size: 25px; margin-bottom: 12px; text-transform: uppercase; color: #00ffcc; text-align: center; } /* Reduzido de 28px */
+        h1 { font-size: 25px; margin-bottom: 12px; text-transform: uppercase; color: #00ffcc; text-align: center; }
 
         /* --- AGENDAMENTOS SEMANAIS --- */
         #lista { width: 100%; height: 50vh; overflow: hidden; position: relative; }
@@ -46,7 +47,7 @@
         .separador-dia {
             background-color: #444; color: #ffcc00; font-weight: bold; text-transform: uppercase;
             padding: 8px 15px; border-radius: 8px; font-size: 16px; margin-bottom: 10px; width: 100%; box-sizing: border-box;
-        } /* Reduzido de 18px */
+        }
 
         .evento { 
             background: rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; 
@@ -55,10 +56,10 @@
         .evento.hoje { border-left-color: #00ff00; background: rgba(45, 56, 45, 0.6); }
 
         .linha-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-        .titulo-evento { font-size: 17px; font-weight: bold; color: #fff; } /* Reduzido de 19px */
+        .titulo-evento { font-size: 17px; font-weight: bold; color: #fff; }
         .horario-evento { font-size: 15px; font-weight: bold; color: #00ccff; }
 
-        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: #ccc; } /* Reduzido de 14px */
+        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: #ccc; }
         .detalhe-item b { color: #00ffcc; }
 
         /* --- AVISOS --- */
@@ -67,7 +68,7 @@
             background: #ffcc00; color: black; padding: 15px 22px; border-radius: 12px; 
             font-size: 19px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 12px;
             box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-        } /* Reduzido de 21px */
+        }
         .aviso strong { font-size: 21px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 6px; }
 
         /* --- DICAS --- */
@@ -76,7 +77,7 @@
             background: rgba(255, 255, 255, 0.08); padding: 22px; border-radius: 15px; 
             font-size: 19px; line-height: 1.3; width: 100%; box-sizing: border-box; text-align: center;
             border: 2px solid #00ffcc; display: none;
-        } /* Reduzido de 21px */
+        }
         .dica-item.ativa { display: block; }
         .dica-item strong { font-size: 22px; color: #00ffcc; display: block; margin-bottom: 10px; }
 
@@ -86,7 +87,7 @@
             display: flex; justify-content: space-around; align-items: center; 
             background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
         }
-        .temp-principal { font-size: 60px; font-weight: bold; display: flex; align-items: center; gap: 12px; } /* Reduzido */
+        .temp-principal { font-size: 60px; font-weight: bold; display: flex; align-items: center; gap: 12px; }
         .detalhes-clima { display: flex; gap: 30px; text-align: center; font-size: 14px; }
         .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 21px; }
         
@@ -289,7 +290,7 @@ function carregarDados() {
     fetch(BASE_URL + "?tipo=aniversariantes").then(r=>r.json()).then(data=>{
         listaAniversariantes = data;
         let html = "";
-        data.forEach(p => html += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><br><span style="font-size:20px; font-weight:bold">${p.nome}</span></div>`); // Reduzido
+        data.forEach(p => html += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><br><span style="font-size:20px; font-weight:bold">${p.nome}</span></div>`);
         document.getElementById("listaAniversariantes").innerHTML = html || `<h2 style="color: #fff; z-index:2;">Nenhum aniversariante hoje!</h2>`;
     });
 
@@ -297,7 +298,7 @@ function carregarDados() {
         let html = `
             <div class="header-previsao">
                 <div class="temp-principal">
-                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:90px">
+                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:100px">
                     <div>${d.temperatura}°C</div>
                 </div>
                 <div class="detalhes-clima">
