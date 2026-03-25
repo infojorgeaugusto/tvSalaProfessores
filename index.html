@@ -6,16 +6,11 @@
     <title>Painel Escolar - EEB Jorge Augusto</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* --- RESET E FORMATO AUTOMÁTICO --- */
-        * { box-sizing: border-box; }
-        
         body {
-            margin: 0; padding: 0; 
-            height: 100vh; width: 100vw;
+            margin: 0; padding: 0; height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-            color: white; font-family: 'Segoe UI', Arial, sans-serif; 
-            overflow: hidden;
-            /* zoom: 1.2; Opcional: Se ainda achar pequeno na TV, descomente esta linha */
+            color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
+            zoom: 0.60;
         }
 
         /* --- ANIMAÇÕES --- */
@@ -24,115 +19,93 @@
         @keyframes rolagemVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
 
         /* --- ESTRUTURA FIXA --- */
-        #topoEsquerdo { position: absolute; top: 3vh; left: 3vw; display: flex; align-items: center; gap: 20px; z-index: 100; }
-        
-        /* ✅ AJUSTE: Logo do cabeçalho agora tem tamanho fixo menor */
-        #logoEscola { height: 70px; width: auto; object-fit: contain; } 
-        
-        #nomeEscola { font-size: 2.6rem; font-weight: bold; font-family: 'Montserrat', sans-serif; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-        
-        #dataHora { position: absolute; top: 3vh; right: 3vw; font-size: 1.8rem; font-weight: bold; text-align: right; z-index: 100; line-height: 1.2; }
-        #climaBox { position: absolute; top: 12vh; right: 3vw; background: rgba(0, 0, 0, 0.6); padding: 12px 20px; border-radius: 12px; z-index: 100; }
-        #clima { font-size: 1.8rem; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        #topoEsquerdo { position: absolute; top: 15px; left: 30px; display: flex; align-items: center; gap: 15px; z-index: 100; }
+        #logoEscola { height: 75px; }
+        #nomeEscola { font-size: 24px; font-weight: bold; } /* Reduzido de 26px */
+        #dataHora { position: absolute; top: 15px; right: 30px; font-size: 13px; font-weight: bold; text-align: right; z-index: 100; }
+        #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
+        #clima { font-size: 16px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 
-        /* --- SISTEMA DE TELAS AUTOMÁTICO --- */
+        /* --- SISTEMA DE TELAS --- */
         .tela {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 22vh 3vw 3vh 3vw; /* Mantém o texto longe do cabeçalho */
-            display: none; flex-direction: column; align-items: center; justify-content: flex-start;
+            padding: 110px 30px 20px 30px; box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
-        
-        h1 { font-size: 3.2rem; margin-top: 0; margin-bottom: 3vh; text-transform: uppercase; color: #00ffcc; text-align: center; font-family: 'Montserrat'; text-shadow: 2px 2px 5px rgba(0,0,0,0.6); }
-
-        /* ✅ AJUSTE: Escudo na tela de Boas-Vindas agora está travado em tamanho médio */
-        #imgBoasVindas { height: 35vh; max-height: 350px; width: auto; object-fit: contain; margin-top: 3vh; }
+        h1 { font-size: 25px; margin-bottom: 12px; text-transform: uppercase; color: #00ffcc; text-align: center; } /* Reduzido de 28px */
 
         /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { 
-            width: 100%; 
-            flex: 1; 
-            overflow: hidden; 
-            position: relative; 
-            margin-bottom: 2vh;
-        } 
-        
+        #lista { width: 100%; height: 50vh; overflow: hidden; position: relative; }
         .container-scroll { 
             position: absolute;
             width: 100%;
-            animation: rolagemVertical 45s linear infinite; 
+            animation: rolagemVertical 80s linear infinite; 
         }
         .container-scroll:hover { animation-play-state: paused; }
 
         .separador-dia {
             background-color: #444; color: #ffcc00; font-weight: bold; text-transform: uppercase;
-            padding: 20px 30px; border-radius: 12px; font-size: 2.2rem; margin-bottom: 20px; width: 100%;
-        }
+            padding: 8px 15px; border-radius: 8px; font-size: 16px; margin-bottom: 10px; width: 100%; box-sizing: border-box;
+        } /* Reduzido de 18px */
 
         .evento { 
-            background: rgba(255,255,255,0.1); padding: 30px; margin-bottom: 20px; 
-            border-radius: 15px; border-left: 10px solid #00ffcc; width: 100%; 
+            background: rgba(255,255,255,0.1); padding: 12px; margin-bottom: 10px; 
+            border-radius: 10px; border-left: 6px solid #00ffcc; width: 100%; box-sizing: border-box; 
         }
         .evento.hoje { border-left-color: #00ff00; background: rgba(45, 56, 45, 0.6); }
 
-        .linha-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-        .titulo-evento { font-size: 2.4rem; font-weight: bold; color: #fff; }
-        .horario-evento { font-size: 2.1rem; font-weight: bold; color: #00ccff; }
+        .linha-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+        .titulo-evento { font-size: 17px; font-weight: bold; color: #fff; } /* Reduzido de 19px */
+        .horario-evento { font-size: 15px; font-weight: bold; color: #00ccff; }
 
-        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 35px; font-size: 1.7rem; color: #ccc; }
+        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 15px; font-size: 13px; color: #ccc; } /* Reduzido de 14px */
         .detalhe-item b { color: #00ffcc; }
 
         /* --- AVISOS --- */
-        #avisos { width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+        #avisos { width: 100%; display: flex; flex-direction: column; align-items: center; }
         .aviso { 
-            background: #ffcc00; color: black; padding: 35px; border-radius: 15px; 
-            font-size: 2.4rem; font-weight: bold; width: 100%;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-        }
-        .aviso strong { font-size: 2.8rem; display: block; border-bottom: 3px solid rgba(0,0,0,0.1); margin-bottom: 15px; }
+            background: #ffcc00; color: black; padding: 15px 22px; border-radius: 12px; 
+            font-size: 19px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 12px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
+        } /* Reduzido de 21px */
+        .aviso strong { font-size: 21px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 6px; }
 
         /* --- DICAS --- */
-        #conteudoDicas { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; }
+        #conteudoDicas { width: 100%; display: flex; justify-content: center; }
         .dica-item {
-            background: rgba(255, 255, 255, 0.08); padding: 50px; border-radius: 20px; 
-            font-size: 2.6rem; line-height: 1.4; width: 100%; text-align: center;
-            border: 3px solid #00ffcc; display: none;
-        }
+            background: rgba(255, 255, 255, 0.08); padding: 22px; border-radius: 15px; 
+            font-size: 19px; line-height: 1.3; width: 100%; box-sizing: border-box; text-align: center;
+            border: 2px solid #00ffcc; display: none;
+        } /* Reduzido de 21px */
         .dica-item.ativa { display: block; }
-        .dica-item strong { font-size: 3.2rem; color: #00ffcc; display: block; margin-bottom: 20px; }
+        .dica-item strong { font-size: 22px; color: #00ffcc; display: block; margin-bottom: 10px; }
 
         /* --- PREVISÃO DO TEMPO --- */
-        .container-previsao { width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: space-around; gap: 20px; }
+        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 15px; }
         .header-previsao { 
             display: flex; justify-content: space-around; align-items: center; 
-            background: rgba(0,0,0,0.4); padding: 30px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); width: 100%;
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
         }
-        .temp-principal { font-size: 6.5rem; font-weight: bold; display: flex; align-items: center; gap: 20px; }
-        
-        /* ✅ AJUSTE: Ícone do clima travado em tamanho pequeno/médio */
-        .icone-clima-grande { height: 120px; width: 120px; object-fit: contain; }
-        
-        .detalhes-clima { display: flex; gap: 40px; text-align: center; font-size: 1.8rem; }
-        .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 2.8rem; }
+        .temp-principal { font-size: 60px; font-weight: bold; display: flex; align-items: center; gap: 12px; } /* Reduzido */
+        .detalhes-clima { display: flex; gap: 30px; text-align: center; font-size: 14px; }
+        .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 21px; }
         
         .grafico-temp { 
-            background: rgba(0,0,0,0.4); padding: 30px; border-radius: 20px; height: 35vh; 
-            display: flex; justify-content: space-around; align-items: flex-end; width: 100%;
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; height: 130px; 
+            display: flex; justify-content: space-around; align-items: flex-end; width: 100%; box-sizing: border-box;
         }
         .barra-hora { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .barra { width: 45px; background: #00ffcc; border-radius: 12px 12px 0 0; transition: height 0.5s; }
-        .barra-temp { font-size: 1.8rem; font-weight: bold; margin-bottom: 8px; }
+        .barra { width: 22px; background: #00ffcc; border-radius: 8px 8px 0 0; transition: height 0.5s; }
+        .barra-temp { font-size: 14px; font-weight: bold; margin-bottom: 5px; }
 
         /* --- MIDIA / SLIDESHOW --- */
         #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 5; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: cover; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s; }
+        .slide { position: absolute; width: 100%; height: 100%; background-size: contain; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s; }
         .slide.ativa { opacity: 1; }
 
         /* --- ANIVERSÁRIO --- */
-        .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 5vh !important; justify-content: center; }
-        
-        /* ✅ AJUSTE: Foto do aniversariante travada em tamanho médio (aprox 160px) */
-        .foto-aniversariante { width: 160px; height: 160px; border-radius: 50%; border: 6px solid white; object-fit: cover; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 30px !important; }
+        .foto-aniversariante { width: 140px; height: 140px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
 
         .oculto { display: none !important; }
     </style>
@@ -146,9 +119,9 @@
     <div id="dataHora"></div>
     <div id="climaBox"><div id="clima">...</div></div>
 
-    <div id="telaBoasVindas" class="tela ativa" style="justify-content: center;">
-        <div style="font-size: 3.5rem; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat'; text-align:center; text-shadow: 2px 2px 5px rgba(0,0,0,0.6);">BEM-VINDOS À EEB JORGE AUGUSTO</div>
-        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" id="imgBoasVindas">
+    <div id="telaBoasVindas" class="tela ativa">
+        <div style="font-size: 35px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
+        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:220px; margin-top:15px;">
     </div>
 
     <div id="telaAgenda" class="tela">
@@ -179,13 +152,13 @@
 
     <div id="telaAniversario" class="tela tela-aniversario">
         <canvas id="confettiCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
-        <h1 style="color:white; z-index:2; font-size: 3rem;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
-        <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:40px; z-index:2; flex-wrap:wrap; margin-top:3vh;"></div>
+        <h1 style="color:white; z-index:2;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
+        <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:25px; z-index:2; flex-wrap:wrap; margin-top:15px;"></div>
     </div>
 
     <div id="relOpcional" style="position:fixed; top:0; left:0; width:100%; height:100%; background:red; z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 style="color:white; font-size:4rem">PAUSA FINALIZADA</h1>
-        <div id="relOpcionalConteudo" style="font-size:7rem; color:white; font-weight:bold"></div>
+        <h1 style="color:white; font-size:50px">PAUSA FINALIZADA</h1>
+        <div id="relOpcionalConteudo" style="font-size:100px; color:white; font-weight:bold"></div>
         <audio id="alarmeAudio" loop><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3"></audio>
     </div>
 
@@ -316,7 +289,7 @@ function carregarDados() {
     fetch(BASE_URL + "?tipo=aniversariantes").then(r=>r.json()).then(data=>{
         listaAniversariantes = data;
         let html = "";
-        data.forEach(p => html += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><br><span style="font-size:1.7rem; font-weight:bold; display:block; margin-top:10px">${p.nome}</span></div>`);
+        data.forEach(p => html += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><br><span style="font-size:20px; font-weight:bold">${p.nome}</span></div>`); // Reduzido
         document.getElementById("listaAniversariantes").innerHTML = html || `<h2 style="color: #fff; z-index:2;">Nenhum aniversariante hoje!</h2>`;
     });
 
@@ -324,7 +297,7 @@ function carregarDados() {
         let html = `
             <div class="header-previsao">
                 <div class="temp-principal">
-                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" class="icone-clima-grande">
+                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:90px">
                     <div>${d.temperatura}°C</div>
                 </div>
                 <div class="detalhes-clima">
@@ -340,8 +313,8 @@ function carregarDados() {
             const temps = d.grafico.map(p => p.temp);
             const minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
             d.grafico.forEach(p => {
-                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 80 + 20;
-                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}%"></div><span style="font-size:1.1rem; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
+                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 100 + 10;
+                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span style="font-size:14px; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
             });
         }
     });
