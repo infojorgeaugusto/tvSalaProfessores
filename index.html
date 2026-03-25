@@ -11,8 +11,8 @@
             min-height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) fixed;
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-            zoom: 0.72;
-            cursor: pointer; /* Mostra que a tela é clicável */
+            zoom: 0.72; 
+            cursor: pointer;
         }
 
         /* --- ANIMAÇÕES --- */
@@ -28,17 +28,17 @@
         #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
         #clima { font-size: 19px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 
-        /* --- SISTEMA DE TELAS COM ESPAÇO NO RODAPÉ --- */
+        /* --- SISTEMA DE TELAS --- */
         .tela {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 115px 40px 80px 40px; 
+            padding: 115px 40px 40px 40px; 
             box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
         h1 { font-size: 32px; margin-bottom: 18px; text-transform: uppercase; color: #00ffcc; text-align: center; } 
 
-        /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { width: 100%; height: 55vh; overflow: hidden; position: relative; } 
+        /* --- AGENDAMENTOS SEMANAIS (AJUSTADO PARA USAR A TELA TODA) --- */
+        #lista { width: 100%; height: 72vh; overflow: hidden; position: relative; } 
         .container-scroll { 
             position: absolute;
             width: 100%;
@@ -106,14 +106,20 @@
         .slide { position: absolute; width: 100%; height: 100%; background-size: contain; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s; }
         .slide.ativa { opacity: 1; }
 
-        /* --- ANIVERSÁRIO --- */
-        .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 30px !important; }
-        .foto-aniversariante { width: 160px; height: 160px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
+        /* --- ANIVERSÁRIO (AJUSTADO PARA DISTRIBUIR MELHOR) --- */
+        .tela-aniversario { 
+            background: linear-gradient(135deg, #2b5876, #4e4376); 
+            padding-top: 50px !important; 
+            justify-content: center !important; 
+        }
+        .foto-aniversariante { width: 220px; height: 220px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
 
         .oculto { display: none !important; }
     </style>
 </head>
-<body onclick="solicitarTelaCheia()"> <div id="topoEsquerdo">
+<body onclick="solicitarTelaCheia()">
+
+    <div id="topoEsquerdo">
         <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" id="logoEscola">
         <div id="nomeEscola">EEB JORGE AUGUSTO</div>
     </div>
@@ -122,7 +128,7 @@
 
     <div id="telaBoasVindas" class="tela ativa">
         <div style="font-size: 42px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
-        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:250px; margin-top:15px;">
+        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:280px; margin-top:15px;">
     </div>
 
     <div id="telaAgenda" class="tela">
@@ -153,8 +159,8 @@
 
     <div id="telaAniversario" class="tela tela-aniversario">
         <canvas id="confettiCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
-        <h1 style="color:white; z-index:2;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
-        <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:25px; z-index:2; flex-wrap:wrap; margin-top:15px;"></div>
+        <h1 style="color:white; z-index:2; margin-bottom: 40px;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
+        <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:60px; z-index:2; flex-wrap:wrap; align-items:center;"></div>
     </div>
 
     <div id="relOpcional" style="position:fixed; top:0; left:0; width:100%; height:100%; background:red; z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center;">
@@ -177,14 +183,13 @@ const slidesSrc = [
     "https://i.ibb.co/1tPgSQ4R/05.jpg", "https://i.ibb.co/WWCqVdGd/04.jpg", "https://i.ibb.co/s0rSG23/03.jpg"
 ];
 
-// FUNÇÃO DE TELA CHEIA ATIVADA POR CLIQUE
 function solicitarTelaCheia() {
     const elem = document.documentElement;
     if (elem.requestFullscreen) {
         elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) { /* Safari/Chrome TV */
+    } else if (elem.webkitRequestFullscreen) {
         elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) { /* IE11 */
+    } else if (elem.msRequestFullscreen) {
         elem.msRequestFullscreen();
     }
 }
@@ -302,7 +307,13 @@ function carregarDados() {
     fetch(BASE_URL + "?tipo=aniversariantes").then(r=>r.json()).then(data=>{
         listaAniversariantes = data;
         let html = "";
-        data.forEach(p => html += `<div style="text-align:center"><img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'"><br><span style="font-size:20px; font-weight:bold">${p.nome}</span></div>`);
+        data.forEach(p => html += `
+            <div style="text-align:center">
+                <img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'">
+                <br>
+                <span style="font-size:24px; font-weight:bold; color: white; display: block; margin-top: 15px;">${p.nome}</span>
+            </div>
+        `);
         document.getElementById("listaAniversariantes").innerHTML = html || `<h2 style="color: #fff; z-index:2;">Nenhum aniversariante hoje!</h2>`;
     });
 
