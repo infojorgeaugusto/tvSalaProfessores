@@ -10,7 +10,7 @@
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-            zoom: 0.60; /* ZOOM DE 60% QUE VOCÊ GOSTOU */
+            zoom: 0.60; /* REDUZI PARA 60% PARA CABER COM SOBRA NA TV COM ABAS */
         }
 
         /* --- ANIMAÇÕES --- */
@@ -20,7 +20,7 @@
 
         /* --- ESTRUTURA FIXA --- */
         #topoEsquerdo { position: absolute; top: 15px; left: 30px; display: flex; align-items: center; gap: 15px; z-index: 100; }
-        #logoEscola { height: 75px; }
+        #logoEscola { height: 75px; } /* Logo menor */
         #nomeEscola { font-size: 26px; font-weight: bold; }
         #dataHora { position: absolute; top: 15px; right: 30px; font-size: 14px; font-weight: bold; text-align: right; z-index: 100; }
         #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
@@ -35,7 +35,7 @@
         h1 { font-size: 28px; margin-bottom: 15px; text-transform: uppercase; color: #00ffcc; text-align: center; }
 
         /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { width: 100%; height: 50vh; overflow: hidden; position: relative; }
+        #lista { width: 100%; height: 50vh; overflow: hidden; position: relative; } /* Altura segura para não cortar o rodapé */
         .container-scroll { 
             position: absolute;
             width: 100%;
@@ -313,8 +313,8 @@ function carregarDados() {
             const temps = d.grafico.map(p => p.temp);
             const minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
             d.grafico.forEach(p => {
-                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 110 + 10;
-                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span style="font-size:16px; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
+                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 80 + 20;
+                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span style="font-size:14px; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
             });
         }
     });
