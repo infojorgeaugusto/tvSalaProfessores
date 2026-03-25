@@ -11,7 +11,8 @@
             min-height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) fixed;
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-            zoom: 0.72; /* ZOOM EQUILIBRADO PARA A TV DE 60" COM ABAS */
+            zoom: 0.72;
+            cursor: pointer; /* Mostra que a tela é clicável */
         }
 
         /* --- ANIMAÇÕES --- */
@@ -30,14 +31,14 @@
         /* --- SISTEMA DE TELAS COM ESPAÇO NO RODAPÉ --- */
         .tela {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 115px 40px 80px 40px; /* 80px NO FUNDO PARA PUXAR O CONTEÚDO PARA CIMA */
+            padding: 115px 40px 80px 40px; 
             box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
         h1 { font-size: 32px; margin-bottom: 18px; text-transform: uppercase; color: #00ffcc; text-align: center; } 
 
         /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { width: 100%; height: 55vh; overflow: hidden; position: relative; } /* Altura otimizada */
+        #lista { width: 100%; height: 55vh; overflow: hidden; position: relative; } 
         .container-scroll { 
             position: absolute;
             width: 100%;
@@ -112,9 +113,7 @@
         .oculto { display: none !important; }
     </style>
 </head>
-<body>
-
-    <div id="topoEsquerdo">
+<body onclick="solicitarTelaCheia()"> <div id="topoEsquerdo">
         <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" id="logoEscola">
         <div id="nomeEscola">EEB JORGE AUGUSTO</div>
     </div>
@@ -177,6 +176,18 @@ const slidesSrc = [
     "https://i.ibb.co/vxGD0yy4/01.jpg", "https://i.ibb.co/yFp8sJdm/02.jpg",
     "https://i.ibb.co/1tPgSQ4R/05.jpg", "https://i.ibb.co/WWCqVdGd/04.jpg", "https://i.ibb.co/s0rSG23/03.jpg"
 ];
+
+// FUNÇÃO DE TELA CHEIA ATIVADA POR CLIQUE
+function solicitarTelaCheia() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) { /* Safari/Chrome TV */
+        elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) { /* IE11 */
+        elem.msRequestFullscreen();
+    }
+}
 
 function dispararConfetes() {
     const canvas = document.getElementById('confettiCanvas');
