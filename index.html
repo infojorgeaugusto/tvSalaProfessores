@@ -10,7 +10,7 @@
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-            zoom: 0.60;
+            zoom: 0.60; /* ZOOM DE 60% QUE VOCÊ GOSTOU */
         }
 
         /* --- ANIMAÇÕES --- */
@@ -26,18 +26,16 @@
         #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
         #clima { font-size: 18px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
 
-        /* --- SISTEMA DE TELAS AJUSTADO --- */
+        /* --- SISTEMA DE TELAS --- */
         .tela {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 110px 30px 40px 30px; box-sizing: border-box; 
-            display: none; flex-direction: column; align-items: center;
-            justify-content: space-between; /* ESTICA O CONTEÚDO PRO RODAPÉ */
+            padding: 110px 30px 20px 30px; box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
-        h1 { font-size: 28px; margin-bottom: 10px; text-transform: uppercase; color: #00ffcc; text-align: center; }
+        h1 { font-size: 28px; margin-bottom: 15px; text-transform: uppercase; color: #00ffcc; text-align: center; }
 
         /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { width: 100%; height: 60vh; overflow: hidden; position: relative; margin-bottom: 20px; }
+        #lista { width: 100%; height: 50vh; overflow: hidden; position: relative; }
         .container-scroll { 
             position: absolute;
             width: 100%;
@@ -64,7 +62,7 @@
         .detalhe-item b { color: #00ffcc; }
 
         /* --- AVISOS --- */
-        #avisos { width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1; }
+        #avisos { width: 100%; display: flex; flex-direction: column; align-items: center; }
         .aviso { 
             background: #ffcc00; color: black; padding: 18px 25px; border-radius: 12px; 
             font-size: 21px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 12px;
@@ -73,7 +71,7 @@
         .aviso strong { font-size: 23px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 6px; }
 
         /* --- DICAS --- */
-        #conteudoDicas { width: 100%; display: flex; justify-content: center; align-items: center; flex-grow: 1; }
+        #conteudoDicas { width: 100%; display: flex; justify-content: center; }
         .dica-item {
             background: rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 15px; 
             font-size: 21px; line-height: 1.3; width: 100%; box-sizing: border-box; text-align: center;
@@ -83,7 +81,7 @@
         .dica-item strong { font-size: 24px; color: #00ffcc; display: block; margin-bottom: 12px; }
 
         /* --- PREVISÃO DO TEMPO --- */
-        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 15px; justify-content: center; flex-grow: 1; }
+        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 15px; }
         .header-previsao { 
             display: flex; justify-content: space-around; align-items: center; 
             background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
@@ -93,8 +91,8 @@
         .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 24px; }
         
         .grafico-temp { 
-            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; height: 160px; 
-            display: flex; justify-content: space-around; align-items: flex-end; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+            background: rgba(0,0,0,0.4); padding: 15px; border-radius: 15px; height: 140px; 
+            display: flex; justify-content: space-around; align-items: flex-end; width: 100%; box-sizing: border-box;
         }
         .barra-hora { display: flex; flex-direction: column; align-items: center; flex: 1; }
         .barra { width: 25px; background: #00ffcc; border-radius: 10px 10px 0 0; transition: height 0.5s; }
@@ -106,7 +104,7 @@
         .slide.ativa { opacity: 1; }
 
         /* --- ANIVERSÁRIO --- */
-        .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 30px !important; justify-content: center !important; }
+        .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 30px !important; }
         .foto-aniversariante { width: 150px; height: 150px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
 
         .oculto { display: none !important; }
@@ -124,32 +122,28 @@
     <div id="telaBoasVindas" class="tela ativa">
         <div style="font-size: 40px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
         <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:250px; margin-top:15px;">
-        <div></div> </div>
+    </div>
 
     <div id="telaAgenda" class="tela">
         <h1>AGENDAMENTOS DA SEMANA (LAB TECH)</h1>
         <div id="lista">
             <div class="container-scroll" id="containerScroll"></div>
         </div>
-        <div></div>
     </div>
 
     <div id="telaAvisos" class="tela">
         <h1>AVISOS IMPORTANTES</h1>
         <div id="avisos"></div>
-        <div></div>
     </div>
 
     <div id="telaDicas" class="tela">
         <h1>DICA DO DIA</h1>
         <div id="conteudoDicas"></div>
-        <div></div>
     </div>
 
     <div id="telaPrevisao" class="tela">
         <h1>PREVISÃO PARA AMANHÃ</h1>
         <div class="container-previsao" id="previsaoBox"></div>
-        <div></div>
     </div>
 
     <div id="telaMidia" class="tela">
@@ -160,7 +154,6 @@
         <canvas id="confettiCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
         <h1 style="color:white; z-index:2;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
         <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:25px; z-index:2; flex-wrap:wrap; margin-top:15px;"></div>
-        <div></div>
     </div>
 
     <div id="relOpcional" style="position:fixed; top:0; left:0; width:100%; height:100%; background:red; z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center;">
