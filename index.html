@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Painel Escolar - EEB Jorge Augusto</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -9,6 +10,7 @@
             margin: 0; padding: 0; height: 100vh; width: 100vw;
             background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
             color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
+            zoom: 0.75; /* ENCOLHE O PAINEL PARA RESPEITAR O ESPAÇO DA BARRA DO NAVEGADOR */
         }
 
         /* --- ANIMAÇÕES --- */
@@ -18,23 +20,22 @@
 
         /* --- ESTRUTURA FIXA --- */
         #topoEsquerdo { position: absolute; top: 20px; left: 40px; display: flex; align-items: center; gap: 20px; z-index: 100; }
-        #logoEscola { height: 110px; }
-        #nomeEscola { font-size: 38px; font-weight: bold; }
-        #dataHora { position: absolute; top: 20px; right: 40px; font-size: 20px; font-weight: bold; text-align: right; z-index: 100; }
+        #logoEscola { height: 90px; }
+        #nomeEscola { font-size: 30px; font-weight: bold; }
+        #dataHora { position: absolute; top: 20px; right: 40px; font-size: 16px; font-weight: bold; text-align: right; z-index: 100; }
         #climaBox { position: absolute; top: 85px; right: 40px; background: rgba(0, 0, 0, 0.6); padding: 10px 20px; border-radius: 15px; z-index: 100; }
-        #clima { font-size: 26px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        #clima { font-size: 22px; font-weight: bold; display: flex; align-items: center; gap: 10px; }
 
         /* --- SISTEMA DE TELAS --- */
         .tela {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 160px 40px 40px 40px; box-sizing: border-box; display: none; flex-direction: column; align-items: center;
+            padding: 120px 40px 30px 40px; box-sizing: border-box; display: none; flex-direction: column; align-items: center;
         }
         .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
-        h1 { font-size: 40px; margin-bottom: 25px; text-transform: uppercase; color: #00ffcc; text-align: center; }
+        h1 { font-size: 32px; margin-bottom: 20px; text-transform: uppercase; color: #00ffcc; text-align: center; }
 
         /* --- AGENDAMENTOS SEMANAIS --- */
-        #lista { width: 100%; height: 65vh; overflow: hidden; position: relative; }
-        
+        #lista { width: 100%; height: 55vh; overflow: hidden; position: relative; } /* Reduzi a altura para não cortar embaixo */
         .container-scroll { 
             position: absolute;
             width: 100%;
@@ -44,58 +45,58 @@
 
         .separador-dia {
             background-color: #444; color: #ffcc00; font-weight: bold; text-transform: uppercase;
-            padding: 15px 20px; border-radius: 10px; font-size: 24px; margin-bottom: 12px; width: 100%; box-sizing: border-box;
+            padding: 12px 20px; border-radius: 10px; font-size: 20px; margin-bottom: 12px; width: 100%; box-sizing: border-box;
         }
 
         .evento { 
-            background: rgba(255,255,255,0.1); padding: 22px; margin-bottom: 15px; 
+            background: rgba(255,255,255,0.1); padding: 18px; margin-bottom: 12px; 
             border-radius: 10px; border-left: 8px solid #00ffcc; width: 100%; box-sizing: border-box; 
         }
         .evento.hoje { border-left-color: #00ff00; background: rgba(45, 56, 45, 0.6); }
 
         .linha-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .titulo-evento { font-size: 26px; font-weight: bold; color: #fff; }
-        .horario-evento { font-size: 22px; font-weight: bold; color: #00ccff; }
+        .titulo-evento { font-size: 22px; font-weight: bold; color: #fff; }
+        .horario-evento { font-size: 18px; font-weight: bold; color: #00ccff; }
 
-        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 20px; font-size: 20px; color: #ccc; }
+        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 20px; font-size: 16px; color: #ccc; }
         .detalhe-item b { color: #00ffcc; }
 
         /* --- AVISOS --- */
         #avisos { width: 100%; display: flex; flex-direction: column; align-items: center; }
         .aviso { 
-            background: #ffcc00; color: black; padding: 25px 35px; border-radius: 15px; 
-            font-size: 28px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 15px;
+            background: #ffcc00; color: black; padding: 22px 30px; border-radius: 15px; 
+            font-size: 24px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 15px;
             box-shadow: 0 8px 15px rgba(0,0,0,0.4);
         }
-        .aviso strong { font-size: 34px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 8px; }
+        .aviso strong { font-size: 26px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 8px; }
 
         /* --- DICAS --- */
         #conteudoDicas { width: 100%; display: flex; justify-content: center; }
         .dica-item {
-            background: rgba(255, 255, 255, 0.08); padding: 35px; border-radius: 20px; 
-            font-size: 30px; line-height: 1.3; width: 100%; box-sizing: border-box; text-align: center;
+            background: rgba(255, 255, 255, 0.08); padding: 30px; border-radius: 20px; 
+            font-size: 24px; line-height: 1.3; width: 100%; box-sizing: border-box; text-align: center;
             border: 2px solid #00ffcc; display: none;
         }
         .dica-item.ativa { display: block; }
-        .dica-item strong { font-size: 38px; color: #00ffcc; display: block; margin-bottom: 15px; }
+        .dica-item strong { font-size: 28px; color: #00ffcc; display: block; margin-bottom: 15px; }
 
-        /* --- PREVISÃO DO TEMPO (AMPLIADA) --- */
-        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 25px; }
+        /* --- PREVISÃO DO TEMPO --- */
+        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 20px; }
         .header-previsao { 
             display: flex; justify-content: space-around; align-items: center; 
-            background: rgba(0,0,0,0.4); padding: 30px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
         }
-        .temp-principal { font-size: 110px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
-        .detalhes-clima { display: flex; gap: 50px; text-align: center; font-size: 26px; }
-        .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 38px; }
+        .temp-principal { font-size: 75px; font-weight: bold; display: flex; align-items: center; gap: 15px; }
+        .detalhes-clima { display: flex; gap: 40px; text-align: center; font-size: 18px; }
+        .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 28px; }
         
         .grafico-temp { 
-            background: rgba(0,0,0,0.4); padding: 25px; border-radius: 20px; height: 220px; 
+            background: rgba(0,0,0,0.4); padding: 20px; border-radius: 20px; height: 160px; 
             display: flex; justify-content: space-around; align-items: flex-end; width: 100%; box-sizing: border-box;
         }
         .barra-hora { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .barra { width: 45px; background: #00ffcc; border-radius: 12px 12px 0 0; transition: height 0.5s; }
-        .barra-temp { font-size: 24px; font-weight: bold; margin-bottom: 5px; }
+        .barra { width: 30px; background: #00ffcc; border-radius: 12px 12px 0 0; transition: height 0.5s; }
+        .barra-temp { font-size: 18px; font-weight: bold; margin-bottom: 5px; }
 
         /* --- MIDIA / SLIDESHOW --- */
         #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 5; }
@@ -104,7 +105,7 @@
 
         /* --- ANIVERSÁRIO --- */
         .tela-aniversario { background: linear-gradient(135deg, #2b5876, #4e4376); padding-top: 40px !important; }
-        .foto-aniversariante { width: 250px; height: 250px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
+        .foto-aniversariante { width: 180px; height: 180px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
 
         .oculto { display: none !important; }
     </style>
@@ -119,8 +120,8 @@
     <div id="climaBox"><div id="clima">...</div></div>
 
     <div id="telaBoasVindas" class="tela ativa">
-        <div style="font-size: 55px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
-        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:380px; margin-top:20px;">
+        <div style="font-size: 45px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
+        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:280px; margin-top:20px;">
     </div>
 
     <div id="telaAgenda" class="tela">
@@ -175,7 +176,6 @@ const slidesSrc = [
     "https://i.ibb.co/1tPgSQ4R/05.jpg", "https://i.ibb.co/WWCqVdGd/04.jpg", "https://i.ibb.co/s0rSG23/03.jpg"
 ];
 
-// --- SISTEMA DE CONFETES FUNCIONAL ---
 function dispararConfetes() {
     const canvas = document.getElementById('confettiCanvas');
     if (!canvas) return;
@@ -297,7 +297,7 @@ function carregarDados() {
         let html = `
             <div class="header-previsao">
                 <div class="temp-principal">
-                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:160px">
+                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:120px">
                     <div>${d.temperatura}°C</div>
                 </div>
                 <div class="detalhes-clima">
@@ -313,8 +313,8 @@ function carregarDados() {
             const temps = d.grafico.map(p => p.temp);
             const minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
             d.grafico.forEach(p => {
-                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 110 + 30;
-                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span style="font-size:20px; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
+                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 90 + 30;
+                container.innerHTML += `<div class="barra-hora"><span class="barra-temp">${p.temp}°</span><div class="barra" style="height:${alt}px"></div><span style="font-size:16px; font-weight:bold; margin-top:5px;">${p.hora}h</span></div>`;
             });
         }
     });
@@ -368,7 +368,6 @@ function iniciarSlideshow() {
     }, 5000);
 }
 
-// Corrigido e fechado o loop do alarme escolar
 setInterval(() => {
     const agora = new Date();
     document.getElementById("dataHora").innerHTML = agora.toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'}) + "<br>" + agora.toLocaleTimeString('pt-BR');
