@@ -1,426 +1,762 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Painel Escolar - EEB Jorge Augusto</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Segoe+UI:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            margin: 0; padding: 0; 
-            min-height: 100vh; width: 100vw;
-            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364) fixed;
-            color: white; font-family: 'Segoe UI', Arial, sans-serif; overflow: hidden;
-            zoom: 0.72; 
-            cursor: pointer;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel EEB Jorge Augusto</title>
+<style>
+/* ── RESET ── */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-        /* --- ANIMAÇÕES --- */
-        @keyframes flutuar { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-        @keyframes entrada { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes rolagemVertical { 0% { transform: translateY(0); } 100% { transform: translateY(-100%); } }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #030d1a;
+  color: #e8f4fd;
+  font-family: Arial, Helvetica, sans-serif;
+}
 
-        /* --- ESTRUTURA FIXA --- */
-        #topoEsquerdo { position: absolute; top: 15px; left: 30px; display: flex; align-items: center; gap: 15px; z-index: 100; }
-        #logoEscola { height: 85px; } 
-        #nomeEscola { font-size: 28px; font-weight: bold; } 
-        #dataHora { position: absolute; top: 15px; right: 30px; font-size: 15px; font-weight: bold; text-align: right; z-index: 100; }
-        #climaBox { position: absolute; top: 75px; right: 30px; background: rgba(0, 0, 0, 0.6); padding: 8px 15px; border-radius: 12px; z-index: 100; }
-        #clima { font-size: 19px; font-weight: bold; display: flex; align-items: center; gap: 8px; }
+/* ── CABEÇALHO ── */
+#cab {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 80px;
+  background: #030d1a;
+  border-bottom: 2px solid #00e5ff;
+  z-index: 100;
+  display: table;
+}
+#cab-esq, #cab-cen, #cab-dir {
+  display: table-cell;
+  vertical-align: middle;
+}
+#cab-esq { width: 33%; padding-left: 22px; }
+#cab-cen { width: 34%; text-align: center; }
+#cab-dir { width: 33%; text-align: right; padding-right: 22px; }
 
-        /* --- SISTEMA DE TELAS --- */
-        .tela {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            padding: 115px 40px 40px 40px; 
-            box-sizing: border-box; display: none; flex-direction: column; align-items: center;
-        }
-        .tela.ativa { display: flex; animation: entrada 0.5s ease-out; }
-        h1 { font-size: 32px; margin-bottom: 18px; text-transform: uppercase; color: #00ffcc; text-align: center; } 
+#logoEscola {
+  height: 58px; vertical-align: middle;
+  display: inline-block;
+}
+#logoFallback {
+  display: none; width: 58px; height: 58px;
+  border-radius: 50%; background: #00e5ff;
+  color: #030d1a; font-size: 20px; font-weight: 900;
+  line-height: 58px; text-align: center;
+  vertical-align: middle;
+}
+#nomeEscola {
+  display: inline-block; vertical-align: middle; margin-left: 10px;
+}
+.nl1 { display: block; font-size: 10px; letter-spacing: 5px; color: rgba(232,244,253,0.5); }
+.nl2 { display: block; font-size: 19px; letter-spacing: 2px; color: #00e5ff; font-weight: 900; }
 
-        /* --- AGENDAMENTOS SEMANAIS (AJUSTADO PARA USAR A TELA TODA) --- */
-        #lista { width: 100%; height: 72vh; overflow: hidden; position: relative; } 
-        .container-scroll { 
-            position: absolute;
-            width: 100%;
-            animation: rolagemVertical 80s linear infinite; 
-        }
-        .container-scroll:hover { animation-play-state: paused; }
+#clima-box {
+  display: inline-block;
+  background: rgba(0,229,255,0.09);
+  border: 1px solid rgba(0,229,255,0.25);
+  border-radius: 30px;
+  padding: 7px 22px;
+  font-size: 19px; font-weight: 600; color: #e8f4fd;
+}
 
-        .separador-dia {
-            background-color: #444; color: #ffcc00; font-weight: bold; text-transform: uppercase;
-            padding: 12px 18px; border-radius: 8px; font-size: 20px; margin-bottom: 12px; width: 100%; box-sizing: border-box;
-        } 
+#relogio .hora { display: block; font-size: 26px; color: #00e5ff; font-weight: 700; letter-spacing: 2px; }
+#relogio .data { display: block; font-size: 11px; color: rgba(232,244,253,0.5); letter-spacing: 1px; text-transform: uppercase; }
 
-        .evento { 
-            background: rgba(255,255,255,0.1); padding: 16px; margin-bottom: 12px; 
-            border-radius: 10px; border-left: 8px solid #00ffcc; width: 100%; box-sizing: border-box; 
-        }
-        .evento.hoje { border-left-color: #00ff00; background: rgba(45, 56, 45, 0.6); }
+/* ── BARRA PROGRESSO ── */
+#barraP {
+  position: absolute; top: 80px; left: 0;
+  width: 100%; height: 3px;
+  background: rgba(0,229,255,0.12); z-index: 99;
+}
+#barraF { height: 3px; width: 0%; background: #00e5ff; }
 
-        .linha-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .titulo-evento { font-size: 21px; font-weight: bold; color: #fff; } 
-        .horario-evento { font-size: 18px; font-weight: bold; color: #00ccff; }
+/* ── TELAS ──
+   TODAS ficam display:block, visibilidade por opacity+visibility
+   Evita bug de reflow em Smart TVs ── */
+.tela {
+  position: absolute;
+  top: 83px; left: 0;
+  width: 100%;
+  height: calc(100% - 83px);
+  padding: 22px 42px 26px;
+  overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+}
+.tela.on { opacity: 1; visibility: visible; }
 
-        .detalhes-agendamento { display: flex; flex-wrap: wrap; gap: 18px; font-size: 16px; color: #ccc; } 
-        .detalhe-item b { color: #00ffcc; }
+/* ── BOAS-VINDAS ── */
+#t0 {
+  top: 0; height: 100%; padding: 0;
+  background: #030d1a;
+}
+.bv-wrap {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 80%;
+  margin-top: -130px;
+  margin-left: -40%;
+  text-align: left;
+}
+.bv-logo {
+  height: 200px; vertical-align: middle;
+  display: inline-block;
+}
+.bv-logoFb {
+  display: none; width: 200px; height: 200px;
+  border-radius: 50%; background: #00e5ff;
+  color: #030d1a; font-size: 60px; font-weight: 900;
+  line-height: 200px; text-align: center;
+  vertical-align: middle;
+}
+.bv-txt {
+  display: inline-block; vertical-align: middle; margin-left: 44px;
+}
+.bv-bem  { font-size: 22px; letter-spacing: 7px; color: rgba(232,244,253,0.45); margin-bottom: 8px; }
+.bv-nome { font-size: 56px; font-weight: 900; color: #00e5ff; line-height: 1; }
+.bv-sub  { font-size: 19px; color: #ffd600; letter-spacing: 3px; margin-top: 10px; }
 
-        /* --- AVISOS --- */
-        #avisos { width: 100%; display: flex; flex-direction: column; align-items: center; }
-        .aviso { 
-            background: #ffcc00; color: black; padding: 20px 25px; border-radius: 12px; 
-            font-size: 22px; font-weight: bold; width: 100%; box-sizing: border-box; margin-bottom: 15px;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.4);
-        } 
-        .aviso strong { font-size: 25px; display: block; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 6px; }
+/* ── TÍTULOS ── */
+.tit {
+  font-size: 21px; font-weight: 900; letter-spacing: 3px;
+  color: #00e5ff; text-transform: uppercase; text-align: center;
+  padding-bottom: 13px; border-bottom: 1px solid rgba(0,229,255,0.2);
+  margin-bottom: 16px;
+}
 
-        /* --- DICAS --- */
-        #conteudoDicas { width: 100%; display: flex; justify-content: center; }
-        .dica-item {
-            background: rgba(255, 255, 255, 0.08); padding: 25px; border-radius: 15px; 
-            font-size: 22px; line-height: 1.4; width: 100%; box-sizing: border-box; text-align: center;
-            border: 2px solid #00ffcc; display: none;
-        } 
-        .dica-item.ativa { display: block; }
-        .dica-item strong { font-size: 26px; color: #00ffcc; display: block; margin-bottom: 12px; }
+/* ── AGENDA ── */
+#scrollBox { overflow: hidden; height: calc(100% - 65px); }
+#scrollInn { }
+.ag-sep {
+  font-size: 13px; font-weight: 700; letter-spacing: 2px;
+  text-transform: uppercase; color: #ffd600;
+  padding: 6px 2px 4px;
+  border-bottom: 1px solid rgba(255,214,0,0.2);
+  margin: 8px 0 6px;
+}
+.ag-item {
+  display: table; width: 100%;
+  background: rgba(0,229,255,0.07);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-left: 5px solid #00e5ff;
+  border-radius: 12px;
+  padding: 15px 22px;
+  margin-bottom: 10px;
+}
+.ag-hora {
+  display: table-cell; vertical-align: middle;
+  width: 115px; font-size: 26px; font-weight: 900;
+  color: #00e5ff; text-align: center;
+}
+.ag-hora small { display: block; font-size: 11px; color: rgba(232,244,253,0.4); margin-top: 2px; }
+.ag-info { display: table-cell; vertical-align: middle; padding-left: 16px; }
+.ag-info strong { display: block; font-size: 23px; font-weight: 700; color: #e8f4fd; text-transform: uppercase; }
+.ag-tags { margin-top: 6px; }
+.ag-tag {
+  display: inline-block; font-size: 13px; font-weight: 700;
+  background: rgba(0,229,255,0.12); border: 1px solid rgba(0,229,255,0.25);
+  border-radius: 6px; padding: 2px 10px; color: #00e5ff; margin-right: 5px;
+}
 
-        /* --- PREVISÃO DO TEMPO --- */
-        .container-previsao { width: 100%; display: flex; flex-direction: column; gap: 18px; }
-        .header-previsao { 
-            display: flex; justify-content: space-around; align-items: center; 
-            background: rgba(0,0,0,0.4); padding: 18px; border-radius: 15px; border: 2px solid rgba(255,255,255,0.1); width: 100%; box-sizing: border-box;
-        }
-        .temp-principal { font-size: 70px; font-weight: bold; display: flex; align-items: center; gap: 12px; } 
-        .detalhes-clima { display: flex; gap: 35px; text-align: center; font-size: 16px; }
-        .detalhe-valor { font-weight: bold; color: #00ffcc; font-size: 25px; }
-        
-        .grafico-temp { 
-            background: rgba(0,0,0,0.4); padding: 18px; border-radius: 15px; height: 150px; 
-            display: flex; justify-content: space-around; align-items: flex-end; width: 100%; box-sizing: border-box;
-        }
-        .barra-hora { display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .barra { width: 26px; background: #00ffcc; border-radius: 8px 8px 0 0; transition: height 0.5s; }
-        .barra-temp { font-size: 16px; font-weight: bold; margin-bottom: 5px; }
+/* ── AVISOS ── */
+.av-card {
+  background: rgba(255,214,0,0.07);
+  border: 1px solid rgba(255,214,0,0.28); border-top: 4px solid #ffd600;
+  border-radius: 12px; padding: 18px 24px; margin-bottom: 16px;
+}
+.av-card h3 { font-size: 20px; font-weight: 800; color: #ffd600; text-transform: uppercase; margin-bottom: 7px; }
+.av-card p  { font-size: 18px; line-height: 1.5; color: #e8f4fd; }
+.av-per     { display: block; margin-top: 7px; font-size: 13px; color: rgba(255,214,0,0.75); font-weight: 600; }
 
-        /* --- MIDIA / SLIDESHOW --- */
-        #slideshow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 5; }
-        .slide { position: absolute; width: 100%; height: 100%; background-size: contain; background-position: center; background-repeat: no-repeat; opacity: 0; transition: opacity 1.5s; }
-        .slide.ativa { opacity: 1; }
+/* ── DICAS ── */
+#t3 { display: table; }
+#t3.on { display: table; }
+.dica-wrap {
+  display: table-cell; vertical-align: middle;
+  width: 100%; height: 100%; text-align: center;
+}
+.dica-card {
+  display: inline-block; max-width: 1000px; width: 90%;
+  background: rgba(0,230,118,0.08);
+  border: 1px solid rgba(0,230,118,0.22); border-left: 6px solid #00e676;
+  border-radius: 14px; padding: 44px 54px; text-align: center;
+}
+.dica-card p { font-size: 32px; font-weight: 600; line-height: 1.4; color: #e8f4fd; }
 
-        /* --- ANIVERSÁRIO (FOTOS AMPLIADAS E ESPAÇADAS) --- */
-        .tela-aniversario { 
-            background: linear-gradient(135deg, #2b5876, #4e4376); 
-            padding-top: 50px !important; 
-            justify-content: center !important; 
-        }
-        .foto-aniversariante { width: 220px; height: 220px; border-radius: 50%; border: 6px solid white; object-fit: cover; }
+/* ── PREVISÃO ── */
+#prev-wrap { text-align: center; padding-top: 10px; }
+.prev-box {
+  display: inline-block;
+  background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 18px; padding: 28px 56px; margin-bottom: 18px;
+}
+.prev-em   { font-size: 68px; vertical-align: middle; margin-right: 18px; }
+.prev-temp { display: inline-block; vertical-align: middle; }
+.prev-grau { display: block; font-size: 84px; font-weight: 900; color: #ffd600; line-height: 1; }
+.prev-desc { display: block; font-size: 22px; color: rgba(232,244,253,0.55); text-transform: capitalize; }
+.prev-dets {
+  display: inline-block;
+  background: rgba(0,229,255,0.05); border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 12px; padding: 16px 36px;
+}
+.prev-di { display: inline-block; margin: 0 18px; text-align: center; }
+.prev-dl { display: block; font-size: 11px; color: rgba(232,244,253,0.45); letter-spacing: 2px; font-weight: 600; }
+.prev-dv { display: block; font-size: 28px; font-weight: 800; color: #00e5ff; }
+.prev-dv.max { color: #ff1744; }
+.prev-dv.min { color: #64b5f6; }
 
-        .oculto { display: none !important; }
-    </style>
+/* ── SLIDESHOW ── */
+#t5 { padding: 22px 42px 14px; }
+#slides {
+  position: relative; width: 100%;
+  height: calc(100% - 36px); overflow: hidden;
+}
+.sl-fr {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  opacity: 0;
+  -webkit-transition: opacity 1s ease;
+  transition: opacity 1s ease;
+}
+.sl-fr.on { opacity: 1; }
+.sl-img {
+  position: absolute; top: 0;
+  width: calc(50% - 10px); height: 100%;
+  border-radius: 12px; overflow: hidden;
+  border: 2px solid rgba(0,229,255,0.22);
+  background: #071a2e;
+}
+.sl-img:first-child { left: 0; }
+.sl-img:last-child  { left: calc(50% + 10px); }
+.sl-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#sl-leg {
+  text-align: center; font-size: 13px; letter-spacing: 4px;
+  color: rgba(255,255,255,0.3); text-transform: uppercase; margin-top: 6px;
+}
+
+/* ── ANIVERSÁRIO ── */
+#t6 { background: #030d1a; text-align: center; }
+#cv  { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+#nv-inn { position: relative; z-index: 2; padding-top: 30px; }
+#nv-tit { font-size: 46px; font-weight: 900; color: #ffd600; letter-spacing: 2px; margin-bottom: 30px; }
+.nv-it  { display: inline-block; text-align: center; margin: 0 18px; vertical-align: top; }
+.nv-it img { width: 130px; height: 130px; border-radius: 50%; border: 4px solid #ffd600; object-fit: cover; display: block; }
+.nv-it p   { font-size: 20px; font-weight: 700; color: #e8f4fd; margin-top: 8px; max-width: 150px; }
+
+/* ── ALERTA PAUSA ── */
+#pausa {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: #c62828; z-index: 9999;
+  text-align: center; display: none;
+}
+#pausa-txt { padding-top: 28vh; }
+#pausa-txt h2 { font-size: 38px; font-weight: 800; letter-spacing: 5px; color: rgba(255,255,255,0.8); text-transform: uppercase; margin-bottom: 14px; }
+#pausa-txt h1 { font-size: 84px; font-weight: 900; color: #ffd600; line-height: 1.1; }
+
+.vazio { color: rgba(232,244,253,0.4); font-size: 18px; text-align: center; padding: 28px; }
+</style>
 </head>
-<body onclick="solicitarTelaCheia()">
+<body>
 
-    <div id="topoEsquerdo">
-        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" id="logoEscola">
-        <div id="nomeEscola">EEB JORGE AUGUSTO</div>
+<!-- CABEÇALHO -->
+<div id="cab">
+  <div id="cab-esq">
+    <img id="logoEscola"
+      src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png"
+      alt="JA"
+      onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-block'">
+    <div id="logoFallback">JA</div>
+    <div id="nomeEscola">
+      <span class="nl1">EEB</span>
+      <span class="nl2">JORGE AUGUSTO</span>
     </div>
-    <div id="dataHora"></div>
-    <div id="climaBox"><div id="clima">...</div></div>
+  </div>
+  <div id="cab-cen">
+    <span id="clima-box">Carregando clima...</span>
+  </div>
+  <div id="cab-dir">
+    <div id="relogio"></div>
+  </div>
+</div>
 
-    <div id="telaBoasVindas" class="tela ativa">
-        <div style="font-size: 42px; color: #00ffcc; animation: flutuar 3s infinite ease-in-out; font-family: 'Montserrat';">BEM-VINDOS À EEB JORGE AUGUSTO</div>
-        <img src="https://i.ibb.co/6cMHwnvr/Jorge-Sem-Fundo.png" style="height:280px; margin-top:15px;">
-    </div>
+<div id="barraP"><div id="barraF"></div></div>
 
-    <div id="telaAgenda" class="tela">
-        <h1>AGENDAMENTOS DA SEMANA (LAB TECH)</h1>
-        <div id="lista">
-            <div class="container-scroll" id="containerScroll"></div>
-        </div>
+<!-- TELA 0: BOAS-VINDAS -->
+<div id="t0" class="tela">
+  <div class="bv-wrap">
+    <img class="bv-logo"
+      src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png"
+      alt="JA"
+      onerror="this.style.display='none';document.getElementById('bvFb').style.display='inline-block'">
+    <div id="bvFb" class="bv-logoFb">JA</div>
+    <div class="bv-txt">
+      <div class="bv-bem">BEM-VINDOS A</div>
+      <div class="bv-nome">EEB JORGE AUGUSTO</div>
+      <div class="bv-sub">Educacao que transforma &middot; Lages, SC</div>
     </div>
+  </div>
+</div>
 
-    <div id="telaAvisos" class="tela">
-        <h1>AVISOS IMPORTANTES</h1>
-        <div id="avisos"></div>
-    </div>
+<!-- TELA 1: AGENDA -->
+<div id="t1" class="tela">
+  <div class="tit">AGENDAMENTOS &mdash; LAB DE TECNOLOGIA</div>
+  <div id="scrollBox">
+    <div id="scrollInn"><p class="vazio">Carregando...</p></div>
+  </div>
+</div>
 
-    <div id="telaDicas" class="tela">
-        <h1>DICA DO DIA</h1>
-        <div id="conteudoDicas"></div>
-    </div>
+<!-- TELA 2: AVISOS -->
+<div id="t2" class="tela">
+  <div class="tit">AVISOS IMPORTANTES</div>
+  <div id="avisos"><p class="vazio">Carregando...</p></div>
+</div>
 
-    <div id="telaPrevisao" class="tela">
-        <h1>PREVISÃO PARA AMANHÃ</h1>
-        <div class="container-previsao" id="previsaoBox"></div>
-    </div>
+<!-- TELA 3: DICAS -->
+<div id="t3" class="tela">
+  <div class="dica-wrap">
+    <div class="tit" style="margin-bottom:28px;">DICA DO DIA</div>
+    <div id="dicas"><p class="vazio">Carregando...</p></div>
+  </div>
+</div>
 
-    <div id="telaMidia" class="tela">
-        <div id="slideshow"></div>
-    </div>
+<!-- TELA 4: PREVISÃO -->
+<div id="t4" class="tela">
+  <div class="tit">PREVISAO PARA AMANHA &mdash; LAGES/SC</div>
+  <div id="prev-wrap"><p class="vazio">Carregando...</p></div>
+</div>
 
-    <div id="telaAniversario" class="tela tela-aniversario">
-        <canvas id="confettiCanvas" style="position:absolute;top:0;left:0;width:100%;height:100%;"></canvas>
-        <h1 style="color:white; z-index:2; margin-bottom: 40px;">🎂 FELIZ ANIVERSÁRIO! 🎂</h1>
-        <div id="listaAniversariantes" style="display:flex; justify-content:center; gap:80px; z-index:2; flex-wrap:wrap; align-items:center;"></div>
-    </div>
+<!-- TELA 5: FOTOS -->
+<div id="t5" class="tela">
+  <div id="slides"></div>
+  <div id="sl-leg">EEB JORGE AUGUSTO &middot; Momentos</div>
+</div>
 
-    <div id="relOpcional" style="position:fixed; top:0; left:0; width:100%; height:100%; background:red; z-index:9999; display:none; flex-direction:column; justify-content:center; align-items:center;">
-        <h1 style="color:white; font-size:50px">PAUSA FINALIZADA</h1>
-        <div id="relOpcionalConteudo" style="font-size:100px; color:white; font-weight:bold"></div>
-        <audio id="alarmeAudio" loop><source src="https://raw.githubusercontent.com/infofranciscomanfroi/drive/main/sirene.mp3"></audio>
-    </div>
+<!-- TELA 6: ANIVERSÁRIO -->
+<div id="t6" class="tela">
+  <canvas id="cv"></canvas>
+  <div id="nv-inn">
+    <div id="nv-tit">FELIZ ANIVERSARIO!</div>
+    <div id="nv-lista"></div>
+  </div>
+</div>
+
+<!-- ALERTA PAUSA -->
+<div id="pausa">
+  <div id="pausa-txt"></div>
+  <audio id="sirene" loop>
+    <source src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/audio/videoplayback.m4a" type="audio/mp4">
+  </audio>
+</div>
 
 <script>
-const BASE_URL = "https://script.google.com/macros/s/AKfycbwU9AeiOaIA1N34-_yQnwAHmSrUM_4kWrk5IDNTNeJHzXg8Zz5w2DNMBi5-Q0xwNBu6/exec";
+// ══════════════════════════════════════════════
+//  PAINEL EEB JORGE AUGUSTO — GitHub Pages
+//  Busca dados via fetch() da API Apps Script
+//  ES5 puro — compatível com Smart TVs
+// ══════════════════════════════════════════════
 
-let telaAtual = 0;
-const telas = ["telaBoasVindas", "telaAgenda", "telaAvisos", "telaDicas", "telaPrevisao", "telaMidia", "telaAniversario"];
-let listaDicas = [];
-let dicaIdx = 0;
-let listaAniversariantes = [];
+var API = "https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec";
 
-const slidesSrc = [
-     "https://i.ibb.co/vxGD0yy4/01.jpg",
-     "https://i.ibb.co/yFp8sJdm/02.jpg",
-     "https://i.ibb.co/1tPgSQ4R/05.jpg", 
-     "https://i.ibb.co/WWCqVdGd/04.jpg", 
-     "https://i.ibb.co/s0rSG23/03.jpg",
-     "https://i.ibb.co/gbL6b9Wm/06.jpg"
+var GITHUB = "https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/";
+
+var fotos = [
+  GITHUB + "foto01.jpg",
+  GITHUB + "foto02.jpg",
+  GITHUB + "foto03.jpg",
+  GITHUB + "foto04.jpg",
+  GITHUB + "foto05.jpg",
+  GITHUB + "foto06.jpg"
 ];
 
-function solicitarTelaCheia() {
-    const elem = document.documentElement;
-    if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-    } else if (elem.webkitRequestFullscreen) {
-        elem.webkitRequestFullscreen();
-    } else if (elem.msRequestFullscreen) {
-        elem.msRequestFullscreen();
-    }
+var TELAS = [
+  { id:"t0", dur:8000  },
+  { id:"t1", dur:20000 },
+  { id:"t2", dur:14000 },
+  { id:"t3", dur:12000 },
+  { id:"t4", dur:12000 },
+  { id:"t5", dur:20000 },
+  { id:"t6", dur:12000 }
+];
+
+var telaAtual = 0;
+var timer     = null;
+var scrTimer  = null;
+var cfFrame   = null;
+var dicas     = [];
+var dicaIdx   = 0;
+var pausaOn   = false;
+
+// ── FUSO BRASÍLIA ──────────────────────────
+function agora() {
+  var d   = new Date();
+  var utc = d.getTime() + (d.getTimezoneOffset() * 60000);
+  return new Date(utc + (-3 * 3600000));
 }
 
-function dispararConfetes() {
-    const canvas = document.getElementById('confettiCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    let particles = [];
-    const colors = ['#f44336','#e91e63','#9c27b0','#673ab7','#3f51b5','#2196f3','#03a9f4','#00bcd4','#009688','#4caf50','#8bc34a','#cddc39','#ffeb3b','#ffc107','#ff9800','#ff5722'];
+// ── RELÓGIO ────────────────────────────────
+var DIAS  = ["DOMINGO","SEGUNDA-FEIRA","TERCA-FEIRA","QUARTA-FEIRA","QUINTA-FEIRA","SEXTA-FEIRA","SABADO"];
+var MESES = ["JANEIRO","FEVEREIRO","MARCO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
 
-    for (let i = 0; i < 150; i++) {
-        particles.push({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height - canvas.height,
-            size: Math.random() * 8 + 4,
-            color: colors[Math.floor(Math.random() * colors.length)],
-            speed: Math.random() * 3 + 2,
-            angle: Math.random() * 6.28
-        });
+function relogio() {
+  var d  = agora();
+  var h  = z(d.getHours()) + ":" + z(d.getMinutes()) + ":" + z(d.getSeconds());
+  var dt = DIAS[d.getDay()] + ", " + z(d.getDate()) + " DE " + MESES[d.getMonth()];
+  var el = document.getElementById("relogio");
+  if (el) el.innerHTML = '<span class="hora">' + h + '</span><span class="data">' + dt + '</span>';
+}
+function z(n) { return n < 10 ? "0"+n : ""+n; }
+
+// ── NAVEGAÇÃO ──────────────────────────────
+function ir(idx) {
+  if (telaAtual === 1) pararScroll();
+  var ant = document.getElementById(TELAS[telaAtual].id);
+  if (ant) ant.className = "tela";
+  telaAtual = idx % TELAS.length;
+  var prox = document.getElementById(TELAS[telaAtual].id);
+  if (prox) prox.className = "tela on";
+  if (telaAtual === 1) scrTimer = setTimeout(rolar, 2000);
+  if (telaAtual === 3) mostrarDica();
+  if (telaAtual === 6) confete();
+  agendar();
+}
+
+function agendar() {
+  if (timer) clearTimeout(timer);
+  if (pausaOn) return;
+  var dur = TELAS[telaAtual].dur;
+  progresso(dur);
+  timer = setTimeout(function() { ir(telaAtual + 1); }, dur);
+}
+
+function progresso(dur) {
+  var f = document.getElementById("barraF");
+  if (!f) return;
+  f.style.webkitTransition = "none"; f.style.transition = "none";
+  f.style.width = "0%"; f.offsetWidth;
+  f.style.webkitTransition = "width "+dur+"ms linear";
+  f.style.transition       = "width "+dur+"ms linear";
+  f.style.width = "100%";
+}
+
+// ── PAUSA ──────────────────────────────────
+var GRADE = [
+  {h:9, m:55, t:"1 e 2 Anos"   },
+  {h:10,m:10, t:"3 e 4 Anos"   },
+  {h:10,m:25, t:"5, 8 e 9 Anos"},
+  {h:15,m:15, t:"1 e 2 Anos"   },
+  {h:15,m:30, t:"3 e 4 Anos"   },
+  {h:15,m:45, t:"5, 6 e 7 Anos"}
+];
+
+function checarPausa() {
+  if (pausaOn) return;
+  var d = agora();
+  var dw = d.getDay();
+  if (dw === 0 || dw === 6) return;
+  var h = d.getHours(), m = d.getMinutes();
+  for (var i = 0; i < GRADE.length; i++) {
+    if (GRADE[i].h === h && GRADE[i].m === m) { ativarPausa(GRADE[i].t); break; }
+  }
+}
+
+function ativarPausa(turmas) {
+  pausaOn = true;
+  if (timer) clearTimeout(timer);
+  var el = document.getElementById("pausa-txt");
+  if (el) el.innerHTML = "<h2>PAUSA FINALIZADA</h2><h1>"+turmas+"</h1>";
+  var p = document.getElementById("pausa");
+  if (p) p.style.display = "block";
+  var s = document.getElementById("sirene");
+  if (s) { try { s.play(); } catch(e){} }
+  setTimeout(function() {
+    var p2 = document.getElementById("pausa");
+    if (p2) p2.style.display = "none";
+    var s2 = document.getElementById("sirene");
+    if (s2) { try { s2.pause(); s2.currentTime = 0; } catch(e){} }
+    pausaOn = false;
+    agendar();
+  }, 40000);
+}
+
+// ── BUSCAR DADOS (fetch com CORS) ──────────
+function buscar(tipo, callback) {
+  var url = API + "?tipo=" + tipo;
+  try {
+    fetch(url)
+      .then(function(r) { return r.json(); })
+      .then(function(d) { callback(d); })
+      .catch(function() {});
+  } catch(e) {}
+}
+
+function carregar() {
+  buscar("clima",           mostrarClima);
+  buscar("agenda",          mostrarAgenda);
+  buscar("avisos",          mostrarAvisos);
+  buscar("previsaoAmanha",  mostrarPrevisao);
+  buscar("aniversariantes", mostrarNiver);
+  buscar("dicas",           guardarDicas);
+  setTimeout(carregar, 30 * 60 * 1000);
+}
+
+// ── CLIMA ──────────────────────────────────
+var EM = {"01d":"☀","02d":"⛅","03d":"☁","04d":"☁","09d":"☔","10d":"🌦","11d":"⛈","13d":"❄","50d":"≋"};
+
+function mostrarClima(d) {
+  var el = document.getElementById("clima-box");
+  if (!el || !d) return;
+  var cod = d.icone ? d.icone.replace("n","d") : "";
+  var em  = EM[cod] || "~";
+  el.innerHTML = em + " <strong style='color:#00e5ff'>" + d.temperatura + "°C</strong> " + cap(d.descricao);
+}
+
+// ── AGENDA ─────────────────────────────────
+var DS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"];
+
+function mostrarAgenda(dados) {
+  var inn = document.getElementById("scrollInn");
+  if (!inn) return;
+  pararScroll();
+  inn.style.webkitTransform = "translateY(0)";
+  inn.style.transform = "translateY(0)";
+  inn.innerHTML = "";
+  if (!dados || dados.length <= 1) {
+    inn.innerHTML = "<p class='vazio'>Sem agendamentos esta semana.</p>"; return;
+  }
+  var dant = "";
+  for (var i = 1; i < dados.length; i++) {
+    var it = dados[i]; if (!it[0]) continue;
+    var ini = new Date(it[1]), fim = new Date(it[2]);
+    // Converte para BRT
+    var iniBRT = new Date(ini.getTime() + (ini.getTimezoneOffset()*60000) + (-3*3600000));
+    var fimBRT = new Date(fim.getTime() + (fim.getTimezoneOffset()*60000) + (-3*3600000));
+    var ds = DS[iniBRT.getDay()] + " " + z(iniBRT.getDate()) + "/" + z(iniBRT.getMonth()+1);
+    if (ds !== dant) {
+      dant = ds;
+      var sep = document.createElement("div");
+      sep.className = "ag-sep"; sep.innerHTML = ds.toUpperCase();
+      inn.appendChild(sep);
     }
+    var hI = z(iniBRT.getHours())+":"+z(iniBRT.getMinutes());
+    var hF = z(fimBRT.getHours())+":"+z(fimBRT.getMinutes());
+    var desc = String(it[3]||"");
+    var prof = campo(desc,"Professor") || String(it[0]).split(/\s*[-|]\s*/)[0];
+    var tags = "";
+    var tl = [campo(desc,"Componente"), campo(desc,"Ano"), campo(desc,"Período")];
+    for (var j=0; j<tl.length; j++) { if (tl[j]) tags += '<span class="ag-tag">'+tl[j]+'</span>'; }
+    var div = document.createElement("div");
+    div.className = "ag-item";
+    div.innerHTML = '<div class="ag-hora">'+hI+'<small>ate '+hF+'</small></div>'
+      +'<div class="ag-info"><strong>'+prof+'</strong>'
+      +(tags ? '<div class="ag-tags">'+tags+'</div>' : '')+'</div>';
+    inn.appendChild(div);
+  }
+  scrTimer = setTimeout(rolar, 2000);
+}
 
+function campo(txt, nome) {
+  var r = new RegExp(nome+":\\s*([^]+?)(?=\\s*(?:Email:|Componente:|Ano:|Per|Quantidade:|Recursos:|$))","i");
+  var m = txt.match(r); return m ? m[1].trim() : "";
+}
+
+// ── AUTO-SCROLL ────────────────────────────
+function pararScroll() {
+  if (scrTimer) { clearTimeout(scrTimer); scrTimer = null; }
+  var inn = document.getElementById("scrollInn");
+  if (inn) {
+    inn.style.webkitTransition="none"; inn.style.transition="none";
+    inn.style.webkitTransform="translateY(0)"; inn.style.transform="translateY(0)";
+  }
+}
+
+function rolar() {
+  var box = document.getElementById("scrollBox");
+  var inn = document.getElementById("scrollInn");
+  if (!box||!inn) return;
+  var hB = box.clientHeight||400, hI = inn.scrollHeight||400;
+  if (hI <= hB+20) return;
+  var dist = hI - hB + 40;
+  var dur  = Math.round(dist/55*1000);
+  inn.style.webkitTransition = "-webkit-transform "+dur+"ms linear";
+  inn.style.transition       = "transform "+dur+"ms linear";
+  inn.style.webkitTransform  = "translateY(-"+dist+"px)";
+  inn.style.transform        = "translateY(-"+dist+"px)";
+  scrTimer = setTimeout(function() {
+    inn.style.webkitTransition = "-webkit-transform 1.5s ease";
+    inn.style.transition       = "transform 1.5s ease";
+    inn.style.webkitTransform  = "translateY(0)";
+    inn.style.transform        = "translateY(0)";
+    scrTimer = setTimeout(rolar, 3500);
+  }, dur+3000);
+}
+
+// ── AVISOS ─────────────────────────────────
+function mostrarAvisos(dados) {
+  var el = document.getElementById("avisos");
+  if (!el) return;
+  el.innerHTML = "";
+  var visto = {}, lista = [], linhas = dados ? dados.slice(1) : [];
+  for (var i=0; i<linhas.length; i++) {
+    var r = linhas[i];
+    if (!r[0]||!String(r[0]).trim()) continue;
+    var k = r[0]+"|"+(r[1]||"");
+    if (visto[k]) continue; visto[k]=1; lista.push(r);
+  }
+  if (!lista.length) { el.innerHTML="<p class='vazio'>Sem avisos no momento.</p>"; return; }
+  for (var j=0; j<lista.length; j++) {
+    var ti = limpar(lista[j][0]), ms = limpar(lista[j][1]);
+    var in2 = lista[j][2]?String(lista[j][2]).trim():"";
+    var fi  = lista[j][3]?String(lista[j][3]).trim():"";
+    var per = in2&&fi ? '<span class="av-per">De '+in2+' ate '+fi+'</span>'
+            : in2     ? '<span class="av-per">A partir de '+in2+'</span>' : "";
+    var d = document.createElement("div");
+    d.className = "av-card";
+    d.innerHTML = "<h3>"+ti+"</h3><p>"+ms+"</p>"+per;
+    el.appendChild(d);
+  }
+}
+
+function limpar(s) {
+  return String(s||"").replace(/[^\u0000-\u007F\u00C0-\u024F\u1E00-\u1EFF .,!?:;()\-]/g,"").trim();
+}
+
+// ── DICAS ──────────────────────────────────
+function guardarDicas(d) {
+  dicas = [];
+  var ls = d||[];
+  for (var i=1; i<ls.length; i++) {
+    if (ls[i][0]&&String(ls[i][0]).trim()) dicas.push(String(ls[i][0]).trim());
+  }
+  var t3 = document.getElementById("t3");
+  if (t3 && t3.className.indexOf("on") !== -1) mostrarDica();
+}
+
+function mostrarDica() {
+  var el = document.getElementById("dicas");
+  if (!el) return;
+  var txt = "Mantenha sempre um ambiente de aprendizado positivo!";
+  if (dicas.length > 0) { txt = dicas[dicaIdx % dicas.length]; dicaIdx = (dicaIdx+1) % dicas.length; }
+  el.innerHTML = '<div class="dica-card"><p>'+txt+'</p></div>';
+}
+
+// ── PREVISÃO ───────────────────────────────
+function mostrarPrevisao(d) {
+  var el = document.getElementById("prev-wrap");
+  if (!el||!d) return;
+  var em = EM[d.icone ? d.icone.replace("n","d") : ""] || "~";
+  el.innerHTML =
+    '<div class="prev-box">'
+    +'<span class="prev-em">'+em+'</span>'
+    +'<span class="prev-temp">'
+    +'<span class="prev-grau">'+d.temperatura+'°C</span>'
+    +'<span class="prev-desc">'+cap(d.descricao)+'</span>'
+    +'</span></div>'
+    +'<div class="prev-dets">'
+    +di("MAXIMA",'<span class="prev-dv max">▲ '+d.maxima+'°C</span>')
+    +di("MINIMA",'<span class="prev-dv min">▼ '+d.minima+'°C</span>')
+    +di("UMIDADE",'<span class="prev-dv">'+d.umidade+'%</span>')
+    +di("VENTO",'<span class="prev-dv">'+d.vento+' km/h</span>')
+    +'</div>';
+}
+function di(l,v) { return '<div class="prev-di"><span class="prev-dl">'+l+'</span>'+v+'</div>'; }
+
+// ── ANIVERSARIANTES ────────────────────────
+function mostrarNiver(lista) {
+  var el = document.getElementById("nv-lista");
+  if (!el) return;
+  if (!lista||!lista.length) { el.innerHTML="<p class='vazio'>Nenhum aniversariante hoje</p>"; return; }
+  var html = "";
+  for (var i=0; i<lista.length; i++) {
+    var ft = lista[i].foto || "https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png";
+    html += '<div class="nv-it"><img src="'+ft+'" alt="'+lista[i].nome+'" onerror="this.src=\'https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png\'"><p>'+lista[i].nome+'</p></div>';
+  }
+  el.innerHTML = html;
+}
+
+// ── CONFETE ────────────────────────────────
+function confete() {
+  var cv = document.getElementById("cv"); if (!cv) return;
+  if (cfFrame) { cancelAnimationFrame(cfFrame); cfFrame = null; }
+  setTimeout(function() {
+    var W=cv.offsetWidth||800, H=cv.offsetHeight||600;
+    cv.width=W; cv.height=H;
+    var ctx=cv.getContext("2d");
+    var COR=["#ffd600","#00e5ff","#00e676","#ff1744","#ffffff"];
+    var pts=[];
+    for (var i=0;i<120;i++) pts.push({x:Math.random()*W,y:-(Math.random()*H*0.5),w:Math.random()*12+5,h:Math.random()*6+3,c:COR[Math.floor(Math.random()*COR.length)],vy:Math.random()*4+2,vx:(Math.random()-0.5)*2,a:Math.random()*360,da:Math.random()*5-2.5,op:1});
     function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.forEach(p => {
-            ctx.fillStyle = p.color;
-            ctx.beginPath();
-            ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
-            ctx.fill();
-            p.y += p.speed;
-            p.x += Math.sin(p.angle) * 1;
-            if (p.y > canvas.height) p.y = -10;
-        });
-
-        if (document.getElementById('telaAniversario').classList.contains('ativa')) {
-            requestAnimationFrame(draw);
-        }
+      ctx.clearRect(0,0,W,H); var alive=false;
+      for (var i=0;i<pts.length;i++) {
+        var p=pts[i]; p.y+=p.vy; p.x+=p.vx; p.a+=p.da;
+        if (p.y>H*0.75) p.op=Math.max(0,p.op-0.012);
+        if (p.y<H+20&&p.op>0) alive=true;
+        ctx.save(); ctx.globalAlpha=p.op;
+        ctx.translate(p.x+p.w/2,p.y+p.h/2); ctx.rotate(p.a*Math.PI/180);
+        ctx.fillStyle=p.c; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        ctx.restore();
+      }
+      if (alive) cfFrame=requestAnimationFrame(draw);
     }
     draw();
+  }, 80);
 }
 
-function carregarDados() {
-    fetch(BASE_URL + "?tipo=clima").then(r=>r.json()).then(d=>{
-        document.getElementById("clima").innerHTML = `${d.temperatura}°C <img src="https://openweathermap.org/img/wn/${d.icone}.png" style="height:40px">`;
-    });
-
-    fetch(BASE_URL).then(r=>r.json()).then(data=>{
-        let htmlPrincipal = "";
-        const hojeObj = new Date();
-        const hojeStr = hojeObj.toLocaleDateString("pt-BR");
-        let ultimoDia = "";
-
-        data.slice(1).forEach(e => {
-            const dados = {};
-            if (e[3]) {
-                e[3].split("\n").forEach(l => {
-                    const partes = l.split(":");
-                    if (partes.length >= 2) dados[partes[0].trim().toLowerCase()] = partes.slice(1).join(":").trim();
-                });
-            }
-
-            const inicio = new Date(e[1]);
-            const fim = new Date(e[2]);
-            const dataEventoStr = inicio.toLocaleDateString("pt-BR");
-            const diaFormatado = inicio.toLocaleDateString("pt-BR", { weekday: 'long', day: '2-digit', month: '2-digit' });
-
-            if (diaFormatado !== ultimoDia) {
-                htmlPrincipal += `<div class="separador-dia">${diaFormatado}</div>`;
-                ultimoDia = diaFormatado;
-            }
-
-            const classeHoje = (dataEventoStr === hojeStr) ? "hoje" : "";
-            const numAulas = dados["quantidade"] || (dados["aulas"] ? dados["aulas"].split(",").length : "-");
-
-            htmlPrincipal += `
-                <div class="evento ${classeHoje}">
-                    <div class="linha-cabecalho">
-                        <div class="titulo-evento">${e[0]}</div>
-                        <div class="horario-evento">${inicio.toLocaleTimeString("pt-BR", {hour:'2-digit', minute:'2-digit'})} - ${fim.toLocaleTimeString("pt-BR", {hour:'2-digit', minute:'2-digit'})}</div>
-                    </div>
-                    <div class="detalhes-agendamento">
-                        <div class="detalhe-item">👤 <b>Prof:</b> ${dados["professor"] || "-"}</div>
-                        <div class="detalhe-item">📚 <b>Ano:</b> ${dados["ano"] || "-"}</div>
-                        <div class="detalhe-item">⏰ <b>Turno:</b> ${dados["período"] || "-"}</div>
-                        <div class="detalhe-item">📐 <b>Aulas:</b> ${numAulas}</div>
-                    </div>
-                </div>
-            `;
-        });
-
-        if(htmlPrincipal === "") htmlPrincipal = `<div class="separador-dia">Nenhum agendamento para esta semana.</div>`;
-
-        document.getElementById("containerScroll").innerHTML = htmlPrincipal + htmlPrincipal; 
-    });
-
-    fetch(BASE_URL + "?tipo=avisos").then(r=>r.json()).then(data=>{
-        let html = "";
-        data.slice(1).forEach(row => {
-            html += `<div class="aviso"><strong>${row[0]}</strong>${row[1]}</div>`;
-        });
-        document.getElementById("avisos").innerHTML = html || "Sem novos avisos.";
-    });
-
-    fetch(BASE_URL + "?tipo=dicas").then(r=>r.json()).then(data=>{
-        listaDicas = data.slice(1);
-        let h = "";
-        listaDicas.forEach((d, i) => h += `<div class="dica-item" id="dica_${i}"><strong>${d[0]}</strong>${d[1]}</div>`);
-        document.getElementById("conteudoDicas").innerHTML = h;
-    });
-
-    fetch(BASE_URL + "?tipo=aniversariantes").then(r=>r.json()).then(data=>{
-        listaAniversariantes = data;
-        let html = "";
-        data.forEach(p => html += `
-            <div style="text-align:center">
-                <img src="${p.foto}" class="foto-aniversariante" onerror="this.src='https://i.ibb.co/C0L501F/avatar-padrao.png'">
-                <br>
-                <span style="font-size:24px; font-weight:bold; color: white; display: block; margin-top: 20px;">${p.nome}</span>
-            </div>
-        `);
-        document.getElementById("listaAniversariantes").innerHTML = html || `<h2 style="color: #fff; z-index:2;">Nenhum aniversariante hoje!</h2>`;
-    });
-
-    fetch(BASE_URL + "?tipo=previsaoAmanha").then(r=>r.json()).then(d=>{
-        let html = `
-            <div class="header-previsao">
-                <div class="temp-principal">
-                    <img src="https://openweathermap.org/img/wn/${d.icone}@4x.png" style="height:100px" onerror="this.src='https://cdn-icons-png.flaticon.com/512/869/869869.png'">
-                    <div>${d.temperatura}°C</div>
-                </div>
-                <div class="detalhes-clima">
-                    <div>Máx/Mín<br><span class="detalhe-valor">${d.maxima}°/${d.minima}°</span></div>
-                    <div>Umidade<br><span class="detalhe-valor">${d.umidade}%</span></div>
-                    <div>Vento<br><span class="detalhe-valor">${d.vento}km/h</span></div>
-                </div>
-            </div>
-            <div class="grafico-temp" id="graficoBarras"></div>`;
-        document.getElementById("previsaoBox").innerHTML = html;
-
-        if(d.grafico) {
-            const container = document.getElementById("graficoBarras");
-            const temps = d.grafico.map(p => p.temp);
-            const minT = Math.min(...temps), maxT = Math.max(...temps), range = maxT - minT;
-            
-            d.grafico.forEach(p => {
-                const alt = range === 0 ? 80 : ((p.temp - minT) / range) * 100 + 10;
-                container.innerHTML += `
-                    <div class="barra-hora">
-                        <span class="barra-temp">${p.temp}°</span>
-                        <div class="barra" style="height:${alt}px"></div>
-                        <span style="font-size:16px; font-weight:bold; margin-top:5px;">${p.hora}h</span>
-                    </div>`;
-            });
-        }
-    });
+// ── SLIDESHOW ──────────────────────────────
+function slideshow() {
+  var box = document.getElementById("slides"); if (!box) return;
+  box.innerHTML = "";
+  var n = fotos.length;
+  for (var i=0; i<n; i++) {
+    var fr = document.createElement("div");
+    fr.className = "sl-fr" + (i===0?" on":"");
+    var s1=fotos[i], s2=fotos[(i+1)%n];
+    fr.innerHTML =
+      '<div class="sl-img"><img src="'+s1+'" alt="foto" onerror="this.parentNode.style.background=\'#071a2e\'"></div>'
+      +'<div class="sl-img"><img src="'+s2+'" alt="foto" onerror="this.parentNode.style.background=\'#071a2e\'"></div>';
+    box.appendChild(fr);
+  }
+  var cur=0;
+  setInterval(function() {
+    var frs=box.getElementsByClassName("sl-fr");
+    frs[cur].className="sl-fr";
+    cur=(cur+1)%frs.length;
+    frs[cur].className="sl-fr on";
+  }, 6000);
 }
 
-function trocarTela() {
-    telas.forEach(id => document.getElementById(id).classList.remove("ativa"));
-    let id = telas[telaAtual];
+// ── UTILS ──────────────────────────────────
+function cap(s) { if (!s) return ""; return s.charAt(0).toUpperCase()+s.slice(1); }
 
-    if(id === "telaAniversario" && listaAniversariantes.length === 0) {
-        telaAtual = (telaAtual + 1) % telas.length;
-        trocarTela(); return;
-    }
+// ── INICIALIZAÇÃO ──────────────────────────
+window.onload = function() {
+  // Tela inicial visível imediatamente
+  var t0 = document.getElementById("t0");
+  if (t0) t0.className = "tela on";
 
-    document.getElementById(id).classList.add("ativa");
+  // Relógio
+  relogio();
+  setInterval(relogio, 1000);
 
-    if (id === "telaAniversario") {
-        dispararConfetes();
-    }
-    
-    const fixos = (id === "telaMidia" || id === "telaBoasVindas" || id === "telaAniversario");
-    document.getElementById("topoEsquerdo").classList.toggle("oculto", fixos);
-    document.getElementById("dataHora").classList.toggle("oculto", fixos);
-    document.getElementById("climaBox").classList.toggle("oculto", fixos);
+  // Slideshow
+  slideshow();
 
-    if(id === "telaDicas") {
-        document.querySelectorAll('.dica-item').forEach(d => d.classList.remove('ativa'));
-        const el = document.getElementById(`dica_${dicaIdx}`);
-        if(el) el.classList.add('ativa');
-        dicaIdx = (dicaIdx + 1) % listaDicas.length;
-    }
+  // Rotação — independente dos dados
+  setTimeout(function() { ir(1); }, 4000);
 
-    telaAtual = (telaAtual + 1) % telas.length;
-    setTimeout(trocarTela, 25000); 
-}
+  // Pausas
+  setInterval(checarPausa, 60000);
 
-function iniciarSlideshow() {
-    const container = document.getElementById("slideshow");
-    slidesSrc.forEach((src, i) => {
-        let s = document.createElement("div");
-        s.className = "slide" + (i===0?" ativa":"");
-        s.style.backgroundImage = `url(${src})`;
-        container.appendChild(s);
-    });
-    let idx = 0;
-    setInterval(() => {
-        const ss = document.querySelectorAll(".slide");
-        ss[idx].classList.remove("ativa");
-        idx = (idx + 1) % ss.length;
-        ss[idx].classList.add("ativa");
-    }, 15000);
-}
+  // Dados
+  carregar();
+  setTimeout(carregar, 12000);
 
-setInterval(() => {
-    const agora = new Date();
-    document.getElementById("dataHora").innerHTML = agora.toLocaleDateString('pt-BR', {weekday:'long', day:'2-digit', month:'long'}) + "<br>" + agora.toLocaleTimeString('pt-BR');
-    
-    const h = agora.getHours(), m = agora.getMinutes(), s = agora.getSeconds();
-    const pausas = [[9,30], [10,0], [15,15], [15,30], [16,0], [20,0]];
-    if(pausas.some(p => p[0] === h && p[1] === m) && s === 0) {
-        const box = document.getElementById("relOpcional");
-        box.style.display = "flex";
-        document.getElementById("alarmeAudio").play();
-        setTimeout(() => { box.style.display = "none"; }, 300000);
-    }
-    document.getElementById("relOpcionalConteudo").innerText = agora.toLocaleTimeString();
-}, 1000);
-
-carregarDados();
-iniciarSlideshow();
-setTimeout(trocarTela, 2000);
+  // Tela cheia ao clicar
+  document.body.onclick = function() {
+    var e = document.documentElement;
+    if (e.requestFullscreen)            e.requestFullscreen();
+    else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
+  };
+};
 </script>
 </body>
 </html>
