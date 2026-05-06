@@ -169,16 +169,23 @@ html, body {
 .av-per     { display: block; margin-top: 7px; font-size: 13px; color: rgba(255,214,0,0.75); font-weight: 600; }
 
 /* ── DICAS ── */
-#t3 { display: table; }
-#t3.on { display: table; }
+#t3 {
+  -webkit-justify-content: center; justify-content: center;
+  -webkit-align-items: center; align-items: center;
+}
 .dica-wrap {
-  display: table-cell; vertical-align: middle;
-  width: 100%; height: 100%; text-align: center;
+  width: 100%; text-align: center;
+}
+.dica-tit {
+  font-size: 18px; font-weight: 900; letter-spacing: 3px;
+  color: #00e5ff; text-transform: uppercase;
+  margin-bottom: 28px; opacity: 0.8;
 }
 .dica-card {
   display: inline-block; max-width: 1000px; width: 90%;
   background: rgba(0,230,118,0.08);
-  border: 1px solid rgba(0,230,118,0.22); border-left: 6px solid #00e676;
+  border: 1px solid rgba(0,230,118,0.22);
+  border-left: 6px solid #00e676;
   border-radius: 14px; padding: 44px 54px; text-align: center;
 }
 .dica-card p { font-size: 32px; font-weight: 600; line-height: 1.4; color: #e8f4fd; }
@@ -208,23 +215,11 @@ html, body {
 /* ── SLIDESHOW ── */
 #t5 { padding: 22px 42px 14px; }
 #slides {
-  position: relative; width: 100%;
-  height: calc(100% - 36px); overflow: hidden;
-  display: -webkit-box; display: -webkit-flex; display: flex;
-  gap: 18px;
-}
-.sl-img {
-  -webkit-flex: 1; flex: 1;
-  height: 100%;
-  border-radius: 12px; overflow: hidden;
-  border: 2px solid rgba(0,229,255,0.22);
+  width: 100%;
+  height: calc(100% - 36px);
+  border-radius: 12px;
+  overflow: hidden;
   background: #071a2e;
-}
-.sl-img img {
-  width: 100%; height: 100%;
-  object-fit: cover; display: block;
-  -webkit-transition: opacity 0.6s ease;
-  transition: opacity 0.6s ease;
 }
 #sl-leg {
   text-align: center; font-size: 13px; letter-spacing: 4px;
@@ -311,7 +306,7 @@ html, body {
 <!-- TELA 3: DICAS -->
 <div id="t3" class="tela">
   <div class="dica-wrap">
-    <div class="tit" style="margin-bottom:28px;">DICA DO DIA</div>
+    <div class="dica-tit">💡 DICA DO DIA</div>
     <div id="dicas"><p class="vazio">Carregando...</p></div>
   </div>
 </div>
@@ -727,71 +722,37 @@ function confete() {
 }
 
 // ── SLIDESHOW ──────────────────────────────
-var slAtual = 0;
-var slTimer = null;
+var slIdx = 0;
 
 function slideshow() {
   var box = document.getElementById("slides");
   if (!box) return;
-  box.innerHTML = "";
-
-  // Cria estrutura com apenas 2 divs de imagem (esquerda e direita)
-  // Troca o src sob demanda em vez de pré-carregar tudo
-  box.innerHTML =
-    '<div class="sl-img" id="slL"><img id="slImgL" src="" alt="foto"></div>'
-    +'<div class="sl-img" id="slR"><img id="slImgR" src="" alt="foto"></div>';
-
-  // Carrega o primeiro par imediatamente
-  carregarPar(0);
+  box.innerHTML = '<img id="slImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;border:2px solid rgba(0,229,255,0.22);">';
+  proximaFoto();
 }
 
-function carregarPar(idx) {
-  var n   = fotos.length;
-  var src1 = fotos[idx % n];
-  var src2 = fotos[(idx + 1) % n];
+function proximaFoto() {
+  var img = document.getElementById("slImg");
+  if (!img) return;
 
-  var imgL = document.getElementById("slImgL");
-  var imgR = document.getElementById("slImgR");
-  if (!imgL || !imgR) return;
+  var src = fotos[slIdx % fotos.length];
+  slIdx = (slIdx + 1) % fotos.length;
 
-  // Conta quantas imagens carregaram
-  var carregadas = 0;
-
-  function onCarregada() {
-    carregadas++;
-    if (carregadas >= 2) {
-      // Ambas carregaram — agenda próxima troca
-      if (slTimer) clearTimeout(slTimer);
-      slTimer = setTimeout(function() {
-        slAtual = (slAtual + 1) % fotos.length;
-        carregarPar(slAtual);
-      }, 7000);
-    }
-  }
-
-  // Reseta e carrega nova imagem esquerda
-  imgL.onload  = onCarregada;
-  imgL.onerror = function() {
-    this.parentNode.style.background = "#071a2e";
-    onCarregada(); // conta como carregada para não travar
+  var novaImg = new Image();
+  novaImg.onload = function() {
+    img.src = this.src;
+    setTimeout(proximaFoto, 6000);
   };
-  imgL.src = src1;
-
-  // Reseta e carrega nova imagem direita
-  imgR.onload  = onCarregada;
-  imgR.onerror = function() {
-    this.parentNode.style.background = "#071a2e";
-    onCarregada();
+  novaImg.onerror = function() {
+    // Pula para a próxima se der erro
+    setTimeout(proximaFoto, 2000);
   };
-  imgR.src = src2;
+  novaImg.src = src;
 
-  // Segurança: se demorar mais de 8s, avança mesmo assim
+  // Segurança: avança após 10s mesmo se não carregar
   setTimeout(function() {
-    if (carregadas < 2) {
-      slAtual = (slAtual + 1) % fotos.length;
-      carregarPar(slAtual);
-    }
-  }, 8000);
+    if (img.src !== src) proximaFoto();
+  }, 10000);
 }
 
 // ── UTILS ──────────────────────────────────
