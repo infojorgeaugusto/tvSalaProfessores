@@ -466,8 +466,28 @@ function ativarPausa(turmas) {
   if (el) el.innerHTML = "<h2>PAUSA FINALIZADA</h2><h1>"+turmas+"</h1>";
   var p = document.getElementById("pausa");
   if (p) p.style.display = "block";
+  // Toca sirene — tenta múltiplos métodos
   var s = document.getElementById("sirene");
-  if (s) { try { s.play(); } catch(e){} }
+  if (s) {
+    s.currentTime = 0;
+    s.volume = 1;
+    var promise = s.play();
+    if (promise !== undefined) {
+      promise.catch(function() {
+        // Se bloqueado, tenta recriar o elemento audio
+        var novoAudio = document.createElement("audio");
+        novoAudio.loop = true;
+        novoAudio.id = "sirene";
+        var src = document.createElement("source");
+        src.src = "https://infojorgeaugusto.github.io/tvSalaProfessores/audio/videoplayback.m4a";
+        src.type = "audio/mp4";
+        novoAudio.appendChild(src);
+        s.parentNode.replaceChild(novoAudio, s);
+        novoAudio.load();
+        novoAudio.play().catch(function(){});
+      });
+    }
+  }
   setTimeout(function() {
     var p2 = document.getElementById("pausa");
     if (p2) p2.style.display = "none";
@@ -627,10 +647,13 @@ function limpar(s) {
 // ── DICAS ──────────────────────────────────
 function guardarDicas(d) {
   dicas = [];
-  var ls = d||[];
-  for (var i=1; i<ls.length; i++) {
-    if (ls[i][0]&&String(ls[i][0]).trim()) dicas.push(String(ls[i][0]).trim());
+  var ls = d || [];
+  // Pula cabeçalho (linha 0), pega coluna 0 de cada linha
+  for (var i = 1; i < ls.length; i++) {
+    var val = ls[i] && ls[i][0] ? String(ls[i][0]).trim() : "";
+    if (val) dicas.push(val);
   }
+  // Se a tela de dicas já está visível, atualiza
   var t3 = document.getElementById("t3");
   if (t3 && t3.className.indexOf("on") !== -1) mostrarDica();
 }
@@ -754,11 +777,28 @@ window.onload = function() {
   carregar();
   setTimeout(carregar, 12000);
 
-  // Tela cheia ao clicar
+  // Tela cheia e pré-carrega áudio no primeiro clique
+  var audioDesbloqueado = false;
   document.body.onclick = function() {
     var e = document.documentElement;
     if (e.requestFullscreen)            e.requestFullscreen();
     else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
+    // Desbloqueia autoplay do áudio com interação do usuário
+    if (!audioDesbloqueado) {
+      audioDesbloqueado = true;
+      var s = document.getElementById("sirene");
+      if (s) {
+        s.volume = 0;
+        var p = s.play();
+        if (p !== undefined) {
+          p.then(function() {
+            s.pause();
+            s.currentTime = 0;
+            s.volume = 1;
+          }).catch(function(){});
+        }
+      }
+    }
   };
 };
 </script>
