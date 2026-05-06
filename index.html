@@ -763,36 +763,42 @@ function confete() {
 
 // ── SLIDESHOW ──────────────────────────────
 var slIdx = 0;
+var slOcupado = false;
 
 function slideshow() {
   var box = document.getElementById("slides");
   if (!box) return;
-  box.innerHTML = '<img id="slImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:12px;border:2px solid rgba(0,229,255,0.22);">';
+  box.innerHTML = '<img id="slImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;display:block;">';
+  slIdx = 0;
+  slOcupado = false;
   proximaFoto();
 }
 
 function proximaFoto() {
+  if (slOcupado) return;
+  slOcupado = true;
+
   var img = document.getElementById("slImg");
-  if (!img) return;
+  if (!img) { slOcupado = false; return; }
 
-  var src = fotos[slIdx % fotos.length];
-  slIdx = (slIdx + 1) % fotos.length;
+  var src = fotos[slIdx];
 
-  var novaImg = new Image();
-  novaImg.onload = function() {
+  var temp = new Image();
+
+  temp.onload = function() {
     img.src = this.src;
-    setTimeout(proximaFoto, 6000);
+    slIdx = (slIdx + 1) % fotos.length;
+    slOcupado = false;
+    setTimeout(proximaFoto, 8000); // 8 segundos por foto
   };
-  novaImg.onerror = function() {
-    // Pula para a próxima se der erro
-    setTimeout(proximaFoto, 2000);
-  };
-  novaImg.src = src;
 
-  // Segurança: avança após 10s mesmo se não carregar
-  setTimeout(function() {
-    if (img.src !== src) proximaFoto();
-  }, 10000);
+  temp.onerror = function() {
+    slIdx = (slIdx + 1) % fotos.length;
+    slOcupado = false;
+    setTimeout(proximaFoto, 500); // erro: pula rápido
+  };
+
+  temp.src = src;
 }
 
 // ── UTILS ──────────────────────────────────
