@@ -355,7 +355,7 @@ html, body {
 //  ES5 puro — compatível com Smart TVs
 // ══════════════════════════════════════════════
 
-var API = "https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec";
+var API = "https://script.google.com/macros/s/AKfycbym6aZ69ZqbLPUfLkpxj8e_8vJT_hnoYXFaAZ9L51FmTsbx5zuFhVqV29ZJhMd7rmA3/exec";
 
 var GITHUB = "https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/";
 var V = "?v=2"; // incrementar se precisar forçar recarregamento
@@ -621,22 +621,22 @@ function mostrarAvisos(dados) {
   if (!el) return;
   el.innerHTML = "";
   var visto = {}, lista = [], linhas = dados ? dados.slice(1) : [];
-  for (var i=0; i<linhas.length; i++) {
+  for (var i = 0; i < linhas.length; i++) {
     var r = linhas[i];
-    if (!r[0]||!String(r[0]).trim()) continue;
-    var k = r[0]+"|"+(r[1]||"");
-    if (visto[k]) continue; visto[k]=1; lista.push(r);
+    if (!r[0] || !String(r[0]).trim()) continue;
+    var k = r[0] + "|" + (r[1]||"");
+    if (visto[k]) continue; visto[k] = 1; lista.push(r);
   }
-  if (!lista.length) { el.innerHTML="<p class='vazio'>Sem avisos no momento.</p>"; return; }
-  for (var j=0; j<lista.length; j++) {
-    var ti = limpar(lista[j][0]), ms = limpar(lista[j][1]);
-    var in2 = lista[j][2]?String(lista[j][2]).trim():"";
-    var fi  = lista[j][3]?String(lista[j][3]).trim():"";
-    var per = in2&&fi ? '<span class="av-per">De '+in2+' ate '+fi+'</span>'
-            : in2     ? '<span class="av-per">A partir de '+in2+'</span>' : "";
+  if (!lista.length) { el.innerHTML = "<p class='vazio'>Sem avisos no momento.</p>"; return; }
+  for (var j = 0; j < lista.length; j++) {
+    // Planilha: col A=Título, col B=Mensagem, col C=Data
+    var ti   = limpar(lista[j][0]);
+    var ms   = limpar(lista[j][1]);
+    var data = lista[j][2] ? String(lista[j][2]).trim() : "";
+    var dataHtml = data ? '<span class="av-per">📅 ' + data + '</span>' : "";
     var d = document.createElement("div");
     d.className = "av-card";
-    d.innerHTML = "<h3>"+ti+"</h3><p>"+ms+"</p>"+per;
+    d.innerHTML = "<h3>" + ti + "</h3><p>" + ms + "</p>" + dataHtml;
     el.appendChild(d);
   }
 }
