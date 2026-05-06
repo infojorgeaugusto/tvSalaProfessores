@@ -262,7 +262,7 @@ html, body {
 <div id="cab">
   <div id="cab-esq">
     <img id="logoEscola"
-      src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png"
+      src="https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/JorgeSemFundo.png"
       alt="JA"
       onerror="this.style.display='none';document.getElementById('logoFallback').style.display='inline-block'">
     <div id="logoFallback">JA</div>
@@ -285,7 +285,7 @@ html, body {
 <div id="t0" class="tela">
   <div class="bv-wrap">
     <img class="bv-logo"
-      src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png"
+      src="https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/JorgeSemFundo.png"
       alt="JA"
       onerror="this.style.display='none';document.getElementById('bvFb').style.display='inline-block'">
     <div id="bvFb" class="bv-logoFb">JA</div>
@@ -344,7 +344,7 @@ html, body {
 <div id="pausa">
   <div id="pausa-txt"></div>
   <audio id="sirene" loop>
-    <source src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/audio/videoplayback.m4a" type="audio/mp4">
+    <source src="https://infojorgeaugusto.github.io/tvSalaProfessores/audio/videoplayback.m4a" type="audio/mp4">
   </audio>
 </div>
 
@@ -357,7 +357,7 @@ html, body {
 
 var API = "https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec";
 
-var GITHUB = "https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/";
+var GITHUB = "https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/";
 
 var fotos = [
   GITHUB + "foto01.jpg",
@@ -481,11 +481,15 @@ function ativarPausa(turmas) {
 // ── BUSCAR DADOS (fetch com CORS) ──────────
 function buscar(tipo, callback) {
   var url = API + "?tipo=" + tipo;
+  // Usa XMLHttpRequest — confirmado funcionando na TV
   try {
-    fetch(url)
-      .then(function(r) { return r.json(); })
-      .then(function(d) { callback(d); })
-      .catch(function() {});
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url, true);
+    xhr.onload = function() {
+      try { callback(JSON.parse(xhr.responseText)); } catch(e) {}
+    };
+    xhr.onerror = function() {};
+    xhr.send();
   } catch(e) {}
 }
 
@@ -667,8 +671,8 @@ function mostrarNiver(lista) {
   if (!lista||!lista.length) { el.innerHTML="<p class='vazio'>Nenhum aniversariante hoje</p>"; return; }
   var html = "";
   for (var i=0; i<lista.length; i++) {
-    var ft = lista[i].foto || "https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png";
-    html += '<div class="nv-it"><img src="'+ft+'" alt="'+lista[i].nome+'" onerror="this.src=\'https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png\'"><p>'+lista[i].nome+'</p></div>';
+    var ft = lista[i].foto || "https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/JorgeSemFundo.png";
+    html += '<div class="nv-it"><img src="'+ft+'" alt="'+lista[i].nome+'" onerror="this.src=\'https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/JorgeSemFundo.png\'"><p>'+lista[i].nome+'</p></div>';
   }
   el.innerHTML = html;
 }
