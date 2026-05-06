@@ -1,1 +1,95 @@
 
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Teste TV</title>
+<style>
+body { background:#030d1a; color:#fff; font-family:Arial; padding:20px; font-size:18px; }
+.ok  { color:#00e676; font-weight:bold; }
+.err { color:#ff1744; font-weight:bold; }
+.box { background:rgba(255,255,255,0.1); border-radius:10px; padding:16px; margin-bottom:14px; }
+img.teste { width:120px; height:80px; object-fit:contain; background:#071a2e; border:2px solid #00e5ff; border-radius:8px; }
+</style>
+</head>
+<body>
+<h2 style="color:#00e5ff;margin-bottom:20px;">DIAGNOSTICO TV — EEB JORGE AUGUSTO</h2>
+
+<div class="box">
+  <b>1. Logo (GitHub raw):</b><br>
+  <img class="teste" id="img1"
+    src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/JorgeSemFundo.png"
+    onload="ok('r1')" onerror="err('r1')">
+  <span id="r1" style="margin-left:12px;">aguardando...</span>
+</div>
+
+<div class="box">
+  <b>2. Foto01 (GitHub raw):</b><br>
+  <img class="teste" id="img2"
+    src="https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/imagens/foto01.jpg"
+    onload="ok('r2')" onerror="err('r2')">
+  <span id="r2" style="margin-left:12px;">aguardando...</span>
+</div>
+
+<div class="box">
+  <b>3. Fetch API Apps Script:</b>
+  <span id="r3"> aguardando...</span>
+</div>
+
+<div class="box">
+  <b>4. Fetch direto GitHub (JSON teste):</b>
+  <span id="r4"> aguardando...</span>
+</div>
+
+<div class="box">
+  <b>5. XMLHttpRequest (fallback fetch):</b>
+  <span id="r5"> aguardando...</span>
+</div>
+
+<div class="box">
+  <b>6. JSONP (sem CORS):</b>
+  <span id="r6"> aguardando...</span>
+</div>
+
+<script>
+function ok(id)  { document.getElementById(id).innerHTML = '<span class="ok">FUNCIONOU</span>'; }
+function err(id) { document.getElementById(id).innerHTML = '<span class="err">BLOQUEADO / ERRO</span>'; }
+
+// Teste 3: fetch API
+try {
+  fetch("https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec?tipo=clima")
+    .then(function(r){ return r.json(); })
+    .then(function(d){ document.getElementById("r3").innerHTML = '<span class="ok">FUNCIONOU — '+JSON.stringify(d).slice(0,60)+'</span>'; })
+    .catch(function(e){ document.getElementById("r3").innerHTML = '<span class="err">ERRO: '+e+'</span>'; });
+} catch(e) { err("r3"); }
+
+// Teste 4: fetch github raw json
+try {
+  fetch("https://raw.githubusercontent.com/infojorgeaugusto/tvSalaProfessores/main/README.md")
+    .then(function(r){ return r.text(); })
+    .then(function(t){ document.getElementById("r4").innerHTML = '<span class="ok">FUNCIONOU — '+t.slice(0,40)+'</span>'; })
+    .catch(function(e){ document.getElementById("r4").innerHTML = '<span class="err">ERRO: '+e+'</span>'; });
+} catch(e) { err("r4"); }
+
+// Teste 5: XMLHttpRequest
+try {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET","https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec?tipo=clima",true);
+  xhr.onload  = function(){ document.getElementById("r5").innerHTML='<span class="ok">FUNCIONOU</span>'; };
+  xhr.onerror = function(){ err("r5"); };
+  xhr.send();
+} catch(e) { err("r5"); }
+
+// Teste 6: JSONP
+try {
+  window.jsonpCallback = function(d) {
+    document.getElementById("r6").innerHTML = '<span class="ok">FUNCIONOU</span>';
+  };
+  var s = document.createElement("script");
+  s.src = "https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec?tipo=clima&callback=jsonpCallback";
+  s.onerror = function(){ err("r6"); };
+  document.head.appendChild(s);
+} catch(e) { err("r6"); }
+</script>
+</body>
+</html>
