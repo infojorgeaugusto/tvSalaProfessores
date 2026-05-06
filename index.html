@@ -210,25 +210,22 @@ html, body {
 #slides {
   position: relative; width: 100%;
   height: calc(100% - 36px); overflow: hidden;
+  display: -webkit-box; display: -webkit-flex; display: flex;
+  gap: 18px;
 }
-.sl-fr {
-  position: absolute; top: 0; left: 0;
-  width: 100%; height: 100%;
-  opacity: 0;
-  -webkit-transition: opacity 1s ease;
-  transition: opacity 1s ease;
-}
-.sl-fr.on { opacity: 1; }
 .sl-img {
-  position: absolute; top: 0;
-  width: calc(50% - 10px); height: 100%;
+  -webkit-flex: 1; flex: 1;
+  height: 100%;
   border-radius: 12px; overflow: hidden;
   border: 2px solid rgba(0,229,255,0.22);
   background: #071a2e;
 }
-.sl-img:first-child { left: 0; }
-.sl-img:last-child  { left: calc(50% + 10px); }
-.sl-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.sl-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+  -webkit-transition: opacity 0.6s ease;
+  transition: opacity 0.6s ease;
+}
 #sl-leg {
   text-align: center; font-size: 13px; letter-spacing: 4px;
   color: rgba(255,255,255,0.3); text-transform: uppercase; margin-top: 6px;
@@ -730,26 +727,71 @@ function confete() {
 }
 
 // ── SLIDESHOW ──────────────────────────────
+var slAtual = 0;
+var slTimer = null;
+
 function slideshow() {
-  var box = document.getElementById("slides"); if (!box) return;
+  var box = document.getElementById("slides");
+  if (!box) return;
   box.innerHTML = "";
-  var n = fotos.length;
-  for (var i=0; i<n; i++) {
-    var fr = document.createElement("div");
-    fr.className = "sl-fr" + (i===0?" on":"");
-    var s1=fotos[i], s2=fotos[(i+1)%n];
-    fr.innerHTML =
-      '<div class="sl-img"><img src="'+s1+'" alt="foto" onerror="this.parentNode.style.background=\'#071a2e\'"></div>'
-      +'<div class="sl-img"><img src="'+s2+'" alt="foto" onerror="this.parentNode.style.background=\'#071a2e\'"></div>';
-    box.appendChild(fr);
+
+  // Cria estrutura com apenas 2 divs de imagem (esquerda e direita)
+  // Troca o src sob demanda em vez de pré-carregar tudo
+  box.innerHTML =
+    '<div class="sl-img" id="slL"><img id="slImgL" src="" alt="foto"></div>'
+    +'<div class="sl-img" id="slR"><img id="slImgR" src="" alt="foto"></div>';
+
+  // Carrega o primeiro par imediatamente
+  carregarPar(0);
+}
+
+function carregarPar(idx) {
+  var n   = fotos.length;
+  var src1 = fotos[idx % n];
+  var src2 = fotos[(idx + 1) % n];
+
+  var imgL = document.getElementById("slImgL");
+  var imgR = document.getElementById("slImgR");
+  if (!imgL || !imgR) return;
+
+  // Conta quantas imagens carregaram
+  var carregadas = 0;
+
+  function onCarregada() {
+    carregadas++;
+    if (carregadas >= 2) {
+      // Ambas carregaram — agenda próxima troca
+      if (slTimer) clearTimeout(slTimer);
+      slTimer = setTimeout(function() {
+        slAtual = (slAtual + 1) % fotos.length;
+        carregarPar(slAtual);
+      }, 7000);
+    }
   }
-  var cur=0;
-  setInterval(function() {
-    var frs=box.getElementsByClassName("sl-fr");
-    frs[cur].className="sl-fr";
-    cur=(cur+1)%frs.length;
-    frs[cur].className="sl-fr on";
-  }, 6000);
+
+  // Reseta e carrega nova imagem esquerda
+  imgL.onload  = onCarregada;
+  imgL.onerror = function() {
+    this.parentNode.style.background = "#071a2e";
+    onCarregada(); // conta como carregada para não travar
+  };
+  imgL.src = src1;
+
+  // Reseta e carrega nova imagem direita
+  imgR.onload  = onCarregada;
+  imgR.onerror = function() {
+    this.parentNode.style.background = "#071a2e";
+    onCarregada();
+  };
+  imgR.src = src2;
+
+  // Segurança: se demorar mais de 8s, avança mesmo assim
+  setTimeout(function() {
+    if (carregadas < 2) {
+      slAtual = (slAtual + 1) % fotos.length;
+      carregarPar(slAtual);
+    }
+  }, 8000);
 }
 
 // ── UTILS ──────────────────────────────────
