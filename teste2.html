@@ -1,1 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Teste2</title>
+<style>
+body{background:#030d1a;color:#fff;font-family:Arial;padding:20px;font-size:16px;}
+.ok{color:#00e676;font-weight:bold;}
+.err{color:#ff1744;font-weight:bold;}
+.box{background:rgba(255,255,255,0.08);border-radius:10px;padding:14px;margin-bottom:12px;}
+img{width:100px;height:70px;object-fit:contain;background:#071a2e;border:2px solid #00e5ff;border-radius:6px;vertical-align:middle;}
+</style>
+</head>
+<body>
+<h2 style="color:#00e5ff;margin-bottom:16px;">TESTE 2 — IMAGENS E AUDIO</h2>
 
+<div class="box">
+<b>foto01.jpg:</b>
+<img src="https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/foto01.jpg"
+  onload="ok('f1')" onerror="err('f1')">
+<span id="f1">aguardando...</span>
+</div>
+
+<div class="box">
+<b>foto02.jpg:</b>
+<img src="https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/foto02.jpg"
+  onload="ok('f2')" onerror="err('f2')">
+<span id="f2">aguardando...</span>
+</div>
+
+<div class="box">
+<b>foto01.png (teste extensao):</b>
+<img src="https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/foto01.png"
+  onload="ok('f3')" onerror="err('f3')">
+<span id="f3">aguardando...</span>
+</div>
+
+<div class="box">
+<b>Audio videoplayback.m4a:</b>
+<span id="au">aguardando...</span><br><br>
+<audio controls style="width:300px"
+  oncanplay="ok('au')"
+  onerror="err('au')">
+  <source src="https://infojorgeaugusto.github.io/tvSalaProfessores/audio/videoplayback.m4a" type="audio/mp4">
+</audio>
+</div>
+
+<div class="box">
+<b>Dicas via XHR:</b>
+<span id="dk">aguardando...</span>
+</div>
+
+<div class="box">
+<b>Arquivos na pasta imagens (via API):</b>
+<div id="arq">aguardando...</div>
+</div>
+
+<script>
+function ok(id){document.getElementById(id).innerHTML='<span class="ok">FUNCIONOU</span>';}
+function err(id){document.getElementById(id).innerHTML='<span class="err">ERRO/NAO ENCONTRADO</span>';}
+
+// Testa dicas
+var xhr1 = new XMLHttpRequest();
+xhr1.open("GET","https://script.google.com/macros/s/AKfycbx3m8o92gIjZY40Ym2Re997q5FHSeuoPw2HsU5-30UvDnUiuidb0IWqWZDOn8K681N0/exec?tipo=dicas",true);
+xhr1.onload = function(){
+  try {
+    var d = JSON.parse(xhr1.responseText);
+    document.getElementById("dk").innerHTML = '<span class="ok">FUNCIONOU — '+d.length+' linhas — primeira: '+JSON.stringify(d[0])+'</span>';
+  } catch(e){ err("dk"); }
+};
+xhr1.onerror = function(){ err("dk"); };
+xhr1.send();
+
+// Lista arquivos via GitHub Pages (tenta carregar index)
+var xhr2 = new XMLHttpRequest();
+xhr2.open("GET","https://api.github.com/repos/infojorgeaugusto/tvSalaProfessores/contents/imagens",true);
+xhr2.onload = function(){
+  try {
+    var d = JSON.parse(xhr2.responseText);
+    var nomes = d.map(function(f){return f.name;}).join(", ");
+    document.getElementById("arq").innerHTML = '<span class="ok">'+nomes+'</span>';
+  } catch(e){
+    document.getElementById("arq").innerHTML = '<span class="err">Nao listado: '+xhr2.responseText.slice(0,100)+'</span>';
+  }
+};
+xhr2.onerror = function(){ document.getElementById("arq").innerHTML='<span class="err">Erro ao listar</span>'; };
+xhr2.send();
+</script>
+</body>
+</html>
