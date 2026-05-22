@@ -70,9 +70,7 @@ html, body {
 }
 #barraF { height: 3px; width: 0%; background: #00e5ff; }
 
-/* ── TELAS ──
-   TODAS ficam display:block, visibilidade por opacity+visibility
-   Evita bug de reflow em Smart TVs ── */
+/* ── TELAS ── */
 .tela {
   position: absolute;
   top: 83px; left: 0;
@@ -126,7 +124,6 @@ html, body {
 
 /* ── AGENDA ── */
 #scrollBox { overflow: hidden; height: calc(100% - 65px); }
-#scrollInn { }
 .ag-sep {
   font-size: 13px; font-weight: 700; letter-spacing: 2px;
   text-transform: uppercase; color: #ffd600;
@@ -274,10 +271,11 @@ html, body {
 </style>
 </head>
 <body>
-<video autoplay loop muted playsinline style="position:fixed; bottom:0; right:0; width:1px; height:1px; opacity:0.01; z-index:-999;">
+
+<video autoplay loop muted playsinline style="display: block; position: fixed; bottom: 0; right: 0; width: 0; height: 0; opacity: 0.01; z-index: -999;">
   <source src="https://media.w3.org/2010/05/sintel/trailer_hd.mp4" type="video/mp4">
 </video>
-<!-- CABEÇALHO -->
+
 <div id="cab">
   <div id="cab-esq">
     <img id="logoEscola"
@@ -300,7 +298,6 @@ html, body {
 
 <div id="barraP"><div id="barraF"></div></div>
 
-<!-- TELA 0: BOAS-VINDAS -->
 <div id="t0" class="tela">
   <div class="bv-wrap">
     <img class="bv-logo"
@@ -311,12 +308,11 @@ html, body {
     <div class="bv-txt">
       <div class="bv-bem">BEM-VINDOS A</div>
       <div class="bv-nome">EEB JORGE AUGUSTO</div>
-      <div class="bv-sub">Educacao que transforma &middot; Lages, SC</div>
+      <div class="bv-sub">Educação que transforma &middot; Lages, SC</div>
     </div>
   </div>
 </div>
 
-<!-- TELA 1: AGENDA -->
 <div id="t1" class="tela">
   <div class="tit">AGENDAMENTOS &mdash; LAB DE TECNOLOGIA</div>
   <div id="scrollBox">
@@ -324,13 +320,11 @@ html, body {
   </div>
 </div>
 
-<!-- TELA 2: AVISOS -->
 <div id="t2" class="tela">
   <div class="tit">AVISOS IMPORTANTES</div>
   <div id="avisos"><p class="vazio">Carregando...</p></div>
 </div>
 
-<!-- TELA 3: DICAS -->
 <div id="t3" class="tela">
   <div class="dica-wrap">
     <div class="dica-inner">
@@ -340,28 +334,24 @@ html, body {
   </div>
 </div>
 
-<!-- TELA 4: PREVISÃO -->
 <div id="t4" class="tela">
-  <div class="tit">PREVISAO PARA AMANHA &mdash; LAGES/SC</div>
+  <div class="tit">PREVISÃO PARA AMANHÃ &mdash; LAGES/SC</div>
   <div id="prev-wrap"><p class="vazio">Carregando...</p></div>
 </div>
 
-<!-- TELA 5: FOTOS -->
 <div id="t5" class="tela">
   <div id="slides"></div>
   <div id="sl-leg">EEB JORGE AUGUSTO &middot; Momentos</div>
 </div>
 
-<!-- TELA 6: ANIVERSÁRIO -->
 <div id="t6" class="tela">
   <canvas id="cv"></canvas>
   <div id="nv-inn">
-    <div id="nv-tit">FELIZ ANIVERSARIO!</div>
+    <div id="nv-tit">FELIZ ANIVERSÁRIO!</div>
     <div id="nv-lista"></div>
   </div>
 </div>
 
-<!-- ALERTA PAUSA -->
 <div id="pausa">
   <div id="pausa-txt"></div>
   <audio id="sirene" loop>
@@ -379,7 +369,7 @@ html, body {
 var API = "https://script.google.com/macros/s/AKfycbym6aZ69ZqbLPUfLkpxj8e_8vJT_hnoYXFaAZ9L51FmTsbx5zuFhVqV29ZJhMd7rmA3/exec";
 
 var GITHUB = "https://infojorgeaugusto.github.io/tvSalaProfessores/imagens/";
-var V = "?v=2"; // incrementar se precisar forçar recarregamento
+var V = "?v=2";
 
 var fotos = [
   GITHUB + "foto01.jpg" + V,
@@ -416,8 +406,8 @@ function agora() {
 }
 
 // ── RELÓGIO ────────────────────────────────
-var DIAS  = ["DOMINGO","SEGUNDA-FEIRA","TERCA-FEIRA","QUARTA-FEIRA","QUINTA-FEIRA","SEXTA-FEIRA","SABADO"];
-var MESES = ["JANEIRO","FEVEREIRO","MARCO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
+var DIAS  = ["DOMINGO","SEGUNDA-FEIRA","TERÇA-FEIRA","QUARTA-FEIRA","QUINTA-FEIRA","SEXTA-FEIRA","SÁBADO"];
+var MESES = ["JANEIRO","FEVEREIRO","MARÇO","ABRIL","MAIO","JUNHO","JULHO","AGOSTO","SETEMBRO","OUTUBRO","NOVEMBRO","DEZEMBRO"];
 
 function relogio() {
   var d  = agora();
@@ -433,11 +423,14 @@ function ir(idx) {
   if (telaAtual === 1) pararScroll();
   var ant = document.getElementById(TELAS[telaAtual].id);
   if (ant) ant.className = "tela";
+  
   telaAtual = idx % TELAS.length;
   var prox = document.getElementById(TELAS[telaAtual].id);
   if (prox) prox.className = "tela on";
+  
   if (telaAtual === 1) scrTimer = setTimeout(rolar, 2000);
   if (telaAtual === 3) mostrarDica();
+  if (telaAtual === 5) slideshow(); // Ativa as fotos apenas quando entra na tela correspondente
   if (telaAtual === 6) confete();
   agendar();
 }
@@ -462,12 +455,12 @@ function progresso(dur) {
 
 // ── PAUSA ──────────────────────────────────
 var GRADE = [
-  {h:9, m:55, t:"1 e 2 Anos"   },
-  {h:10,m:10, t:"3 e 4 Anos"   },
-  {h:10,m:25, t:"5, 8 e 9 Anos"},
-  {h:15,m:15, t:"1 e 2 Anos"   },
-  {h:15,m:30, t:"3 e 4 Anos"   },
-  {h:15,m:45, t:"5, 6 e 7 Anos"}
+  {h:9, m:55, t:"1º e 2º Anos"   },
+  {h:10,m:10, t:"3º e 4º Anos"   },
+  {h:10,m:25, t:"5º, 8º e 9º Anos"},
+  {h:15,m:15, t:"1º e 2º Anos"   },
+  {h:15,m:30, t:"3º e 4º Anos"   },
+  {h:15,m:45, t:"5º, 6º e 7º Anos"}
 ];
 
 function checarPausa() {
@@ -488,7 +481,7 @@ function ativarPausa(turmas) {
   if (el) el.innerHTML = "<h2>PAUSA FINALIZADA</h2><h1>"+turmas+"</h1>";
   var p = document.getElementById("pausa");
   if (p) p.style.display = "block";
-  // Toca sirene — tenta múltiplos métodos
+  
   var s = document.getElementById("sirene");
   if (s) {
     s.currentTime = 0;
@@ -496,7 +489,6 @@ function ativarPausa(turmas) {
     var promise = s.play();
     if (promise !== undefined) {
       promise.catch(function() {
-        // Se bloqueado, tenta recriar o elemento audio
         var novoAudio = document.createElement("audio");
         novoAudio.loop = true;
         novoAudio.id = "sirene";
@@ -520,10 +512,9 @@ function ativarPausa(turmas) {
   }, 40000);
 }
 
-// ── BUSCAR DADOS (fetch com CORS) ──────────
+// ── BUSCAR DADOS (XMLHttpRequest para compatibilidade) ──
 function buscar(tipo, callback) {
   var url = API + "?tipo=" + tipo;
-  // Usa XMLHttpRequest — confirmado funcionando na TV
   try {
     var xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
@@ -536,7 +527,7 @@ function buscar(tipo, callback) {
 }
 
 function carregar() {
-  buscar("clima",           mostrarClima);
+  buscar("clima",          mostrarClima);
   buscar("agenda",          mostrarAgenda);
   buscar("avisos",          mostrarAvisos);
   buscar("previsaoAmanha",  mostrarPrevisao);
@@ -545,7 +536,7 @@ function carregar() {
   setTimeout(carregar, 30 * 60 * 1000);
 }
 
-// ── CLIMA ──────────────────────────────────
+// ── CLIMA ATUAL ────────────────────────────
 var EM = {"01d":"☀","02d":"⛅","03d":"☁","04d":"☁","09d":"☔","10d":"🌦","11d":"⛈","13d":"❄","50d":"≋"};
 
 function mostrarClima(d) {
@@ -556,7 +547,7 @@ function mostrarClima(d) {
   el.innerHTML = em + " <strong style='color:#00e5ff'>" + d.temperatura + "°C</strong> " + cap(d.descricao);
 }
 
-// ── AGENDA ─────────────────────────────────
+// ── AGENDA (FILTRANDO DIAS ANTERIORES) ─────
 var DS = ["Dom","Seg","Ter","Qua","Qui","Sex","Sab"];
 
 function mostrarAgenda(dados) {
@@ -569,13 +560,23 @@ function mostrarAgenda(dados) {
   if (!dados || dados.length <= 1) {
     inn.innerHTML = "<p class='vazio'>Sem agendamentos esta semana.</p>"; return;
   }
+  
+  var hojeLocal = agora();
+  hojeLocal.setHours(0, 0, 0, 0);
+
   var dant = "";
   for (var i = 1; i < dados.length; i++) {
     var it = dados[i]; if (!it[0]) continue;
     var ini = new Date(it[1]), fim = new Date(it[2]);
-    // Converte para BRT
+    
     var iniBRT = new Date(ini.getTime() + (ini.getTimezoneOffset()*60000) + (-3*3600000));
     var fimBRT = new Date(fim.getTime() + (fim.getTimezoneOffset()*60000) + (-3*3600000));
+    
+    // Barreira contra agendamentos de dias anteriores
+    var checarData = new Date(iniBRT.getTime());
+    checarData.setHours(0,0,0,0);
+    if (checarData < hojeLocal) { continue; }
+
     var ds = DS[iniBRT.getDay()] + " " + z(iniBRT.getDate()) + "/" + z(iniBRT.getMonth()+1);
     if (ds !== dant) {
       dant = ds;
@@ -592,11 +593,16 @@ function mostrarAgenda(dados) {
     for (var j=0; j<tl.length; j++) { if (tl[j]) tags += '<span class="ag-tag">'+tl[j]+'</span>'; }
     var div = document.createElement("div");
     div.className = "ag-item";
-    div.innerHTML = '<div class="ag-hora">'+hI+'<small>ate '+hF+'</small></div>'
+    div.innerHTML = '<div class="ag-hora">'+hI+'<small>até '+hF+'</small></div>'
       +'<div class="ag-info"><strong>'+prof+'</strong>'
       +(tags ? '<div class="ag-tags">'+tags+'</div>' : '')+'</div>';
     inn.appendChild(div);
   }
+  
+  if (inn.innerHTML === "") {
+    inn.innerHTML = "<p class='vazio'>Sem mais agendamentos para esta semana.</p>";
+  }
+
   scrTimer = setTimeout(rolar, 2000);
 }
 
@@ -650,7 +656,6 @@ function mostrarAvisos(dados) {
   }
   if (!lista.length) { el.innerHTML = "<p class='vazio'>Sem avisos no momento.</p>"; return; }
   for (var j = 0; j < lista.length; j++) {
-    // Planilha: col A=Título, col B=Mensagem, col C=Data
     var ti   = limpar(lista[j][0]);
     var ms   = limpar(lista[j][1]);
     var data = lista[j][2] ? String(lista[j][2]).trim() : "";
@@ -670,12 +675,10 @@ function limpar(s) {
 function guardarDicas(d) {
   dicas = [];
   var ls = d || [];
-  // Pula cabeçalho (linha 0), pega coluna 0 de cada linha
   for (var i = 1; i < ls.length; i++) {
     var val = ls[i] && ls[i][0] ? String(ls[i][0]).trim() : "";
     if (val) dicas.push(val);
   }
-  // Se a tela de dicas já está visível, atualiza
   var t3 = document.getElementById("t3");
   if (t3 && t3.className.indexOf("on") !== -1) mostrarDica();
 }
@@ -688,7 +691,7 @@ function mostrarDica() {
   el.innerHTML = '<div class="dica-card"><p>'+txt+'</p></div>';
 }
 
-// ── PREVISÃO ───────────────────────────────
+// ── PREVISÃO AMANHÃ ────────────────────────
 function mostrarPrevisao(d) {
   var el = document.getElementById("prev-wrap");
   if (!el||!d) return;
@@ -701,8 +704,8 @@ function mostrarPrevisao(d) {
     +'<span class="prev-desc">'+cap(d.descricao)+'</span>'
     +'</span></div>'
     +'<div class="prev-dets">'
-    +di("MAXIMA",'<span class="prev-dv max">▲ '+d.maxima+'°C</span>')
-    +di("MINIMA",'<span class="prev-dv min">▼ '+d.minima+'°C</span>')
+    +di("MÁXIMA",'<span class="prev-dv max">▲ '+d.maxima+'°C</span>')
+    +di("MÍNIMA",'<span class="prev-dv min">▼ '+d.minima+'°C</span>')
     +di("UMIDADE",'<span class="prev-dv">'+d.umidade+'%</span>')
     +di("VENTO",'<span class="prev-dv">'+d.vento+' km/h</span>')
     +'</div>';
@@ -714,15 +717,13 @@ function mostrarNiver(lista) {
   var el = document.getElementById("nv-lista");
   if (!el) return;
   if (!lista || !lista.length) {
-    el.innerHTML = "<p class='vazio'>Nenhum aniversariante hoje</p>";
+    el.innerHTML = "<p class='vazio'>Nenhum aniversariante hoje.</p>";
     return;
   }
   var html = "";
   for (var i = 0; i < lista.length; i++) {
     var nome = lista[i].nome || "";
     var foto = lista[i].foto || "";
-    // Só usa foto se vier de GitHub Pages (funciona na TV)
-    // Senão usa avatar emoji
     var avatarHtml = "";
     if (foto && foto.indexOf("github.io") !== -1) {
       avatarHtml = '<img src="' + foto + '" alt="' + nome + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline-block\'">'
@@ -735,7 +736,7 @@ function mostrarNiver(lista) {
   el.innerHTML = html;
 }
 
-// ── CONFETE ────────────────────────────────
+// ── CONFETE (ANIVERSARIANTES) ──────────────
 function confete() {
   var cv = document.getElementById("cv"); if (!cv) return;
   if (cfFrame) { cancelAnimationFrame(cfFrame); cfFrame = null; }
@@ -763,9 +764,10 @@ function confete() {
   }, 80);
 }
 
-// ── SLIDESHOW ──────────────────────────────
+// ── SLIDESHOW (OTIMIZADO CONTRA TRAVAMENTOS) ──
 var slIdx = 0;
 var slOcupado = false;
+var slTimer = null;
 
 function slideshow() {
   var box = document.getElementById("slides");
@@ -773,10 +775,17 @@ function slideshow() {
   box.innerHTML = '<img id="slImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;display:block;">';
   slIdx = 0;
   slOcupado = false;
+  if (slTimer) clearTimeout(slTimer);
   proximaFoto();
 }
 
 function proximaFoto() {
+  var t5 = document.getElementById("t5");
+  if (!t5 || t5.className.indexOf("on") === -1) {
+    slOcupado = false;
+    return; // Interrompe o processamento se a tela de fotos não estiver visível
+  }
+
   if (slOcupado) return;
   slOcupado = true;
 
@@ -784,20 +793,19 @@ function proximaFoto() {
   if (!img) { slOcupado = false; return; }
 
   var src = fotos[slIdx];
-
   var temp = new Image();
 
   temp.onload = function() {
     img.src = this.src;
     slIdx = (slIdx + 1) % fotos.length;
     slOcupado = false;
-    setTimeout(proximaFoto, 8000); // 8 segundos por foto
+    slTimer = setTimeout(proximaFoto, 8000); 
   };
 
   temp.onerror = function() {
     slIdx = (slIdx + 1) % fotos.length;
     slOcupado = false;
-    setTimeout(proximaFoto, 500); // erro: pula rápido
+    slTimer = setTimeout(proximaFoto, 500); 
   };
 
   temp.src = src;
@@ -806,36 +814,26 @@ function proximaFoto() {
 // ── UTILS ──────────────────────────────────
 function cap(s) { if (!s) return ""; return s.charAt(0).toUpperCase()+s.slice(1); }
 
-// ── INICIALIZAÇÃO ──────────────────────────
+// ── INICIALIZAÇÃO E CONTROLE ───────────────
 window.onload = function() {
-  // Tela inicial visível imediatamente
   var t0 = document.getElementById("t0");
   if (t0) t0.className = "tela on";
 
-  // Relógio
   relogio();
   setInterval(relogio, 1000);
 
-  // Slideshow
-  slideshow();
-
-  // Rotação — independente dos dados
   setTimeout(function() { ir(1); }, 4000);
-
-  // Pausas
   setInterval(checarPausa, 60000);
 
-  // Dados
   carregar();
   setTimeout(carregar, 12000);
 
-  // Tela cheia e pré-carrega áudio no primeiro clique
   var audioDesbloqueado = false;
   document.body.onclick = function() {
     var e = document.documentElement;
-    if (e.requestFullscreen)            e.requestFullscreen();
+    if (e.requestFullscreen)             e.requestFullscreen();
     else if (e.webkitRequestFullscreen) e.webkitRequestFullscreen();
-    // Desbloqueia autoplay do áudio com interação do usuário
+    
     if (!audioDesbloqueado) {
       audioDesbloqueado = true;
       var s = document.getElementById("sirene");
