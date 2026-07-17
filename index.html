@@ -256,6 +256,24 @@ html, body {
   font-size: 60px; text-align: center;
 }
 .nv-it p { font-size: 22px; font-weight: 700; color: #e8f4fd; margin-top: 12px; max-width: 160px; }
+.nv-dia {
+  display: block; font-size: 13px; color: rgba(232,244,253,0.45);
+  margin-top: 4px; letter-spacing: 1px;
+}
+.nv-it.nv-hoje img,
+.nv-it.nv-hoje .nv-av {
+  border-color: #ff1744;
+  box-shadow: 0 0 22px rgba(255,23,68,0.55);
+}
+.nv-badge {
+  display: block; font-size: 13px; font-weight: 900;
+  color: #ff1744; letter-spacing: 2px; margin-bottom: 6px;
+  animation: piscaBadge 1.2s infinite;
+}
+@keyframes piscaBadge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
 
 /* ── ALERTA PAUSA ── */
 #pausa {
@@ -394,7 +412,7 @@ var TELAS = [
   { id:"t0", dur:8000   },
   { id:"t1", dur:20000  },
   { id:"t2", dur:14000  },
-  { id:"t3", dur:20000  },
+  { id:"t3", dur:12000  },
   { id:"t4", dur:12000  },
   { id:"t5", dur:128000 },
   { id:"t6", dur:20000  }
@@ -441,7 +459,7 @@ function ir(idx) {
   if (telaAtual === 1) scrTimer = setTimeout(rolar, 2000);
   if (telaAtual === 3) mostrarDica();
   if (telaAtual === 5) slideshow(); // Ativa as fotos apenas quando entra na tela correspondente
-  if (telaAtual === 6) confete();
+  if (telaAtual === 6 && document.querySelector(".nv-hoje")) confete();
   agendar();
 }
 
@@ -725,15 +743,24 @@ function di(l,v) { return '<div class="prev-di"><span class="prev-dl">'+l+'</spa
 // ── ANIVERSARIANTES ────────────────────────
 function mostrarNiver(lista) {
   var el = document.getElementById("nv-lista");
+  var titEl = document.getElementById("nv-tit");
   if (!el) return;
+
   if (!lista || !lista.length) {
-    el.innerHTML = "<p class='vazio'>Nenhum aniversariante hoje.</p>";
+    if (titEl) titEl.innerHTML = "ANIVERSARIANTES DO MÊS";
+    el.innerHTML = "<p class='vazio'>Nenhum aniversariante este mês.</p>";
     return;
   }
+
+  var temHoje = false;
   var html = "";
   for (var i = 0; i < lista.length; i++) {
     var nome = lista[i].nome || "";
     var foto = lista[i].foto || "";
+    var dia  = lista[i].dia || "";
+    var hoje = !!lista[i].hoje;
+    if (hoje) temHoje = true;
+
     var avatarHtml = "";
     if (foto && foto.indexOf("github.io") !== -1) {
       avatarHtml = '<img src="' + foto + '" alt="' + nome + '" onerror="this.style.display=\'none\';this.nextSibling.style.display=\'inline-block\'">'
@@ -741,8 +768,16 @@ function mostrarNiver(lista) {
     } else {
       avatarHtml = '<span class="nv-av">🎂</span>';
     }
-    html += '<div class="nv-it">' + avatarHtml + '<p>' + nome + '</p></div>';
+
+    html += '<div class="nv-it' + (hoje ? ' nv-hoje' : '') + '">'
+      + (hoje ? '<span class="nv-badge">🎉 HOJE</span>' : '')
+      + avatarHtml
+      + '<p>' + nome + '</p>'
+      + '<span class="nv-dia">Dia ' + dia + '</span>'
+      + '</div>';
   }
+
+  if (titEl) titEl.innerHTML = temHoje ? "FELIZ ANIVERSÁRIO!" : "ANIVERSARIANTES DO MÊS";
   el.innerHTML = html;
 }
 
