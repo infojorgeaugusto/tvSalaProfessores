@@ -391,13 +391,13 @@ var fotos = [
 ];
 
 var TELAS = [
-  { id:"t0", dur:8000  },
-  { id:"t1", dur:20000 },
-  { id:"t2", dur:14000 },
-  { id:"t3", dur:12000 },
-  { id:"t4", dur:12000 },
+  { id:"t0", dur:8000   },
+  { id:"t1", dur:20000  },
+  { id:"t2", dur:14000  },
+  { id:"t3", dur:12000  },
+  { id:"t4", dur:12000  },
   { id:"t5", dur:128000 },
-  { id:"t6", dur:20000 }
+  { id:"t6", dur:20000  }
 ];
 
 var telaAtual = 0;
@@ -774,51 +774,60 @@ function confete() {
   }, 80);
 }
 
-// ── SLIDESHOW (OTIMIZADO CONTRA TRAVAMENTOS) ──
+// ── SLIDESHOW (COM PRÉ-CARREGAMENTO) ──
 var slIdx = 0;
-var slOcupado = false;
 var slTimer = null;
+var slPreImg = null; // guarda a próxima imagem já carregada
 
 function slideshow() {
   var box = document.getElementById("slides");
   if (!box) return;
   box.innerHTML = '<img id="slImg" src="" alt="foto" style="width:100%;height:100%;object-fit:cover;display:block;">';
   slIdx = 0;
-  slOcupado = false;
+  slPreImg = null;
   if (slTimer) clearTimeout(slTimer);
-  proximaFoto();
+  mostrarFotoAtual();
 }
 
-function proximaFoto() {
+function mostrarFotoAtual() {
   var t5 = document.getElementById("t5");
-  if (!t5 || t5.className.indexOf("on") === -1) {
-    slOcupado = false;
-    return; // Interrompe o processamento se a tela de fotos não estiver visível
-  }
-
-  if (slOcupado) return;
-  slOcupado = true;
+  if (!t5 || t5.className.indexOf("on") === -1) return; // tela não está visível, para o ciclo
 
   var img = document.getElementById("slImg");
-  if (!img) { slOcupado = false; return; }
+  if (!img) return;
 
-  var src = fotos[slIdx];
-  var temp = new Image();
+  // Se já tem a próxima foto pré-carregada, usa ela direto (troca instantânea)
+  if (slPreImg && slPreImg.src.indexOf(fotos[slIdx]) !== -1) {
+    img.src = slPreImg.src;
+    agendarProxima();
+  } else {
+    // Fallback: carrega na hora (primeira foto do ciclo, por exemplo)
+    var temp = new Image();
+    temp.onload = function() {
+      img.src = this.src;
+      agendarProxima();
+    };
+    temp.onerror = function() {
+      slIdx = (slIdx + 1) % fotos.length;
+      slTimer = setTimeout(mostrarFotoAtual, 500);
+    };
+    temp.src = fotos[slIdx];
+  }
+}
 
-  temp.onload = function() {
-    img.src = this.src;
-    slIdx = (slIdx + 1) % fotos.length;
-    slOcupado = false;
-    slTimer = setTimeout(proximaFoto, 8000); 
+function agendarProxima() {
+  // Começa a pré-carregar a PRÓXIMA foto já enquanto a atual está sendo exibida
+  var proxIdx = (slIdx + 1) % fotos.length;
+  slPreImg = new Image();
+  slPreImg.onerror = function() {
+    slPreImg = null; // se der erro, o próximo ciclo vai cair no fallback e pular
   };
+  slPreImg.src = fotos[proxIdx];
 
-  temp.onerror = function() {
+  slTimer = setTimeout(function() {
     slIdx = (slIdx + 1) % fotos.length;
-    slOcupado = false;
-    slTimer = setTimeout(proximaFoto, 500); 
-  };
-
-  temp.src = src;
+    mostrarFotoAtual();
+  }, 8000);
 }
 
 // ── UTILS ──────────────────────────────────
