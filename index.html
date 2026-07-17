@@ -156,14 +156,73 @@ html, body {
 }
 
 /* ── AVISOS ── */
-.av-card {
-  background: rgba(255,214,0,0.07);
-  border: 1px solid rgba(255,214,0,0.28); border-top: 4px solid #ffd600;
-  border-radius: 12px; padding: 18px 24px; margin-bottom: 16px;
+#avisos {
+  height: calc(100% - 65px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
 }
-.av-card h3 { font-size: 20px; font-weight: 800; color: #ffd600; text-transform: uppercase; margin-bottom: 7px; }
-.av-card p  { font-size: 18px; line-height: 1.5; color: #e8f4fd; }
-.av-per     { display: block; margin-top: 7px; font-size: 13px; color: rgba(255,214,0,0.75); font-weight: 600; }
+
+.av-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  background: linear-gradient(135deg, rgba(255,214,0,0.10), rgba(255,214,0,0.03));
+  border: 1px solid rgba(255,214,0,0.30);
+  border-left: 6px solid #ffd600;
+  border-radius: 16px;
+  padding: 22px 30px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.av-ico {
+  flex: 0 0 auto;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: rgba(255,214,0,0.16);
+  border: 1px solid rgba(255,214,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px;
+}
+.av-txt { flex: 1 1 auto; min-width: 0; }
+.av-card h3 { font-weight: 800; color: #ffd600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+.av-card p  { line-height: 1.5; color: #e8f4fd; }
+.av-per {
+  display: inline-block; margin-top: 12px;
+  font-weight: 700; color: #030d1a;
+  background: #ffd600; border-radius: 20px;
+  padding: 4px 14px;
+}
+
+/* Grade adaptável conforme quantidade de avisos */
+#avisos.av-qtd-1 { align-items: center; }
+#avisos.av-qtd-1 .av-card { width: 100%; padding: 46px 60px; }
+#avisos.av-qtd-1 .av-ico { width: 76px; height: 76px; font-size: 38px; }
+#avisos.av-qtd-1 .av-card h3 { font-size: 34px; }
+#avisos.av-qtd-1 .av-card p  { font-size: 24px; }
+#avisos.av-qtd-1 .av-per { font-size: 16px; }
+
+#avisos.av-qtd-2 .av-card,
+#avisos.av-qtd-3 .av-card { padding: 28px 34px; }
+#avisos.av-qtd-2 .av-card h3,
+#avisos.av-qtd-3 .av-card h3 { font-size: 24px; }
+#avisos.av-qtd-2 .av-card p,
+#avisos.av-qtd-3 .av-card p  { font-size: 19px; }
+#avisos.av-qtd-2 .av-per,
+#avisos.av-qtd-3 .av-per { font-size: 13px; }
+
+#avisos.av-qtd-muitos {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-content: center;
+  gap: 16px;
+}
+#avisos.av-qtd-muitos .av-card { padding: 18px 22px; }
+#avisos.av-qtd-muitos .av-ico { width: 42px; height: 42px; font-size: 20px; }
+#avisos.av-qtd-muitos .av-card h3 { font-size: 18px; margin-bottom: 5px; }
+#avisos.av-qtd-muitos .av-card p  { font-size: 15px; line-height: 1.4; }
+#avisos.av-qtd-muitos .av-per { font-size: 12px; margin-top: 8px; }
 
 /* ── DICAS ── */
 #t3 { padding: 0; }
@@ -721,7 +780,15 @@ function mostrarAvisos(dados) {
     var k = r[0] + "|" + (r[1]||"");
     if (visto[k]) continue; visto[k] = 1; lista.push(r);
   }
+  el.className = "";
   if (!lista.length) { el.innerHTML = "<p class='vazio'>Sem avisos no momento.</p>"; return; }
+
+  var qtdClasse = lista.length === 1 ? "av-qtd-1"
+                : lista.length === 2 ? "av-qtd-2"
+                : lista.length === 3 ? "av-qtd-3"
+                : "av-qtd-muitos";
+  el.className = qtdClasse;
+
   for (var j = 0; j < lista.length; j++) {
     var ti   = limpar(lista[j][0]);
     var ms   = limpar(lista[j][1]);
@@ -729,7 +796,7 @@ function mostrarAvisos(dados) {
     var dataHtml = data ? '<span class="av-per">📅 ' + data + '</span>' : "";
     var d = document.createElement("div");
     d.className = "av-card";
-    d.innerHTML = "<h3>" + ti + "</h3><p>" + ms + "</p>" + dataHtml;
+    d.innerHTML = '<div class="av-ico">⚠️</div><div class="av-txt"><h3>' + ti + '</h3><p>' + ms + '</p>' + dataHtml + '</div>';
     el.appendChild(d);
   }
 }
