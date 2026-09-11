@@ -522,6 +522,7 @@ var cfFrame   = null;
 var dicas     = [];
 var dicaIdx   = 0;
 var pausaOn   = false;
+var avisosDur = 14000;   // duração dinâmica da tela de avisos
 
 // ── FUSO BRASÍLIA ──────────────────────────
 function agora() {
@@ -563,7 +564,7 @@ function ir(idx) {
 function agendar() {
   if (timer) clearTimeout(timer);
   if (pausaOn) return;
-  var dur = TELAS[telaAtual].dur;
+  var dur = (telaAtual === 2) ? avisosDur : TELAS[telaAtual].dur;
   progresso(dur);
   timer = setTimeout(function() { ir(telaAtual + 1); }, dur);
 }
@@ -781,6 +782,9 @@ function mostrarAvisos(dados) {
   }
   el.className = "";
   if (!lista.length) { el.innerHTML = "<p class='vazio'>Sem avisos no momento.</p>"; return; }
+
+  // Tempo de leitura cresce conforme a quantidade de avisos (mín. 14s, +6s por aviso, máx. 60s)
+  avisosDur = Math.min(60000, Math.max(14000, lista.length * 6000));
 
   var qtdClasse = lista.length === 1 ? "av-qtd-1"
                 : lista.length === 2 ? "av-qtd-2"
