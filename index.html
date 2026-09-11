@@ -156,8 +156,13 @@ html, body {
 }
 
 /* ── AVISOS ── */
-#avisos {
+#avisosBox {
   height: calc(100% - 65px);
+  overflow: hidden;
+  position: relative;
+}
+#avisos {
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -215,7 +220,7 @@ html, body {
 #avisos.av-qtd-muitos {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  align-content: center;
+  align-content: start;
   gap: 16px;
 }
 #avisos.av-qtd-muitos .av-card { padding: 18px 22px; }
@@ -436,7 +441,7 @@ html, body {
 
 <div id="t2" class="tela">
   <div class="tit">AVISOS IMPORTANTES</div>
-  <div id="avisos"><p class="vazio">Carregando...</p></div>
+  <div id="avisosBox"><div id="avisos"><p class="vazio">Carregando...</p></div></div>
 </div>
 
 <div id="t3" class="tela">
@@ -515,14 +520,15 @@ var TELAS = [
   { id:"t6", dur:20000  }
 ];
 
-var telaAtual = 0;
-var timer     = null;
-var scrTimer  = null;
-var cfFrame   = null;
-var dicas     = [];
-var dicaIdx   = 0;
-var pausaOn   = false;
-var avisosDur = 14000;   // duração dinâmica da tela de avisos
+var telaAtual   = 0;
+var timer       = null;
+var scrTimer    = null;
+var avisosScr   = null;  // timer do auto-scroll da tela de avisos
+var cfFrame     = null;
+var dicas       = [];
+var dicaIdx     = 0;
+var pausaOn     = false;
+var avisosDur   = 14000;   // duração dinâmica da tela de avisos
 
 // ── FUSO BRASÍLIA ──────────────────────────
 function agora() {
@@ -547,6 +553,7 @@ function z(n) { return n < 10 ? "0"+n : ""+n; }
 // ── NAVEGAÇÃO ──────────────────────────────
 function ir(idx) {
   if (telaAtual === 1) pararScroll();
+  if (telaAtual === 2) avisosPararScroll();
   var ant = document.getElementById(TELAS[telaAtual].id);
   if (ant) ant.className = "tela";
   
@@ -555,6 +562,7 @@ function ir(idx) {
   if (prox) prox.className = "tela on";
   
   if (telaAtual === 1) scrTimer = setTimeout(rolar, 2000);
+  if (telaAtual === 2) avisosScr = setTimeout(avisosRolar, 2000);
   if (telaAtual === 3) mostrarDica();
   if (telaAtual === 5) slideshow(); // Ativa as fotos apenas quando entra na tela correspondente
   if (telaAtual === 6 && document.querySelector(".nv-hoje-card")) confete();
@@ -768,10 +776,42 @@ function rolar() {
   }, dur+3000);
 }
 
+// ── AVISOS (auto-scroll quando não cabem na tela) ──
+function avisosPararScroll() {
+  if (avisosScr) { clearTimeout(avisosScr); avisosScr = null; }
+  var inn = document.getElementById("avisos");
+  if (inn) {
+    inn.style.webkitTransition="none"; inn.style.transition="none";
+    inn.style.webkitTransform="translateY(0)"; inn.style.transform="translateY(0)";
+  }
+}
+
+function avisosRolar() {
+  var box = document.getElementById("avisosBox");
+  var inn = document.getElementById("avisos");
+  if (!box||!inn) return;
+  var hB = box.clientHeight||400, hI = inn.scrollHeight||400;
+  if (hI <= hB+20) return; // cabe inteiro na tela, não precisa rolar
+  var dist = hI - hB + 40;
+  var dur  = Math.round(dist/45*1000);
+  inn.style.webkitTransition = "-webkit-transform "+dur+"ms linear";
+  inn.style.transition       = "transform "+dur+"ms linear";
+  inn.style.webkitTransform  = "translateY(-"+dist+"px)";
+  inn.style.transform        = "translateY(-"+dist+"px)";
+  avisosScr = setTimeout(function() {
+    inn.style.webkitTransition = "-webkit-transform 1.5s ease";
+    inn.style.transition       = "transform 1.5s ease";
+    inn.style.webkitTransform  = "translateY(0)";
+    inn.style.transform        = "translateY(0)";
+    avisosScr = setTimeout(avisosRolar, 2500);
+  }, dur+3000);
+}
+
 // ── AVISOS ─────────────────────────────────
 function mostrarAvisos(dados) {
   var el = document.getElementById("avisos");
   if (!el) return;
+  avisosPararScroll();
   el.innerHTML = "";
   var visto = {}, lista = [], linhas = dados ? dados.slice(1) : [];
   for (var i = 0; i < linhas.length; i++) {
